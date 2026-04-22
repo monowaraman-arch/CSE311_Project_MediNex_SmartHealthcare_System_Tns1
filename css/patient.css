@@ -1,0 +1,194 @@
+body{
+    border-spacing: 0;
+    margin: 0;
+    padding: 0
+}
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    height: 100vh;
+
+
+}
+.menu{
+    border-right: 1.5px solid rgb(235, 235, 235);
+    width: 24%;
+    height: 100%;
+    box-shadow: 0 0px 0px 2px rgba(240, 240, 240, 0.3);
+}
+.dash-body{
+    width: 76%;
+    height: 100%;
+    background: linear-gradient(180deg, #fff5e6 0%, #ffd9b3 50%, #ffe6cc 100%) !important;
+    padding: 30px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.dash-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, #fff5e6 0%, #ffd9b3 50%, #ffe6cc 100%);
+    z-index: -1;
+}
+
+/* Override Bootstrap container-fluid inside dash-body */
+.dash-body .container-fluid {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* Override Bootstrap card styles for orange theme */
+.dash-body .card {
+    background-color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 16px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden;
+}
+
+.dash-body .card:hover {
+    box-shadow: 0 8px 30px rgba(255, 138, 0, 0.15) !important;
+    transform: translateY(-2px);
+}
+
+.dash-body .card-header {
+    background: linear-gradient(135deg, #fff5e6 0%, #ffe8d2 100%) !important;
+    border-bottom: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 20px 25px !important;
+    font-weight: 600 !important;
+}
+
+.dash-body .card-body {
+    background-color: #ffffff !important;
+    padding: 25px !important;
+}
+
+/* Override Bootstrap row and col for better spacing */
+.dash-body .row {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.dash-body .row > * {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.menu-container{
+    width: 100%;
+    border-spacing: 0;
+    
+}
+
+.profile-title{
+    font-weight: 500;
+    color: #161c2d;
+    font-size: 22px;
+    margin: 0;
+    text-align: left;
+    padding-left: 8%;
+}
+
+.profile-subtitle{
+    font-weight: 300;
+    color: #8492a6;
+    font-size: 15px;
+    margin: 0;
+    text-align: left;
+    padding-left: 8%;
+}
+
+.logout-btn{
+    margin-top: 20px;
+    width: 85%;
+}
+
+.profile-container{
+    border: 1.5px solid rgb(235, 235, 235);
+    border-radius: 6px;
+    padding-top: 12%;
+    padding-bottom: 12%;
+    box-shadow: 0 0 3px rgba(52,58,64,0.08);
+    text-align: center;
+    
+}
+
+
+.menu-items1{
+    font-weight: 500;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    color: #161c2def;
+}
+
+.menu-td1{
+    padding-right: 10px;
+}
+
+
+.menu-button:hover{
+    cursor: pointer;
+    background-color:#396df01f;
+}
+
+.menu-active{
+    background-color:#27272710;
+}
+
+
+.header-container{
+    margin-top: 25px;
+    margin-bottom: 5%;
+    background-image: url(../img/bg01.jpg);
+    
+    background-repeat: no-repeat;
+    background-size:cover;
+    height: 300px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 3px 5px 0 rgba(240, 240, 240, 0.3);
+    border-spacing: 0;
+    
+}
+
+.header-items{
+    background: rgba(26, 26, 26, 0.548);
+    border-radius: 10px;
+    border-spacing: 0;
+}
+
+#header-heading{
+    font-size: 30px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.938);
+}
+
+#header-sub-heading{
+    font-size: 17px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5)
+    ;
+}
+
+.header-search{
+    display: flex;
+    justify-content: center;
+
+    
+}
+.header-searchbar{
+    width: 40%;
+    background-color: rgba(255, 255, 255, 0.705);
+    border: 0.5px solid rgba(190, 190, 190, 0.884);
+    
+    
+}
