@@ -158,7 +158,13 @@
                             if(($_GET))    
                                 if(isset($_GET["id"])){                          
                                     $id=$_GET["id"];
-                                    $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduleid=? order by schedule.scheduledate desc";
+                                    // Fetch schedule and doctor details based on scheduleid passed in URL
+                                    $sqlmain= "select * 
+                                               from schedule 
+                                               inner join doctor on schedule.docid=doctor.docid 
+                                               where schedule.scheduleid=? 
+                                               order by schedule.scheduledate desc";
+
                                     $stmt = $database->prepare($sqlmain);
                                     $stmt->bind_param("i", $id);
                                     $stmt->execute();

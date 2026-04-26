@@ -40,7 +40,7 @@
 
     //import database
     include("../connection.php");
-    $sqlmain= "select * from doctor where docemail=?";
+    $sqlmain= "select * from doctor where docemail=?"; // Get doctor record based on session email to display user info and for use in features
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
@@ -114,23 +114,36 @@
                         if(isset($_POST["search"])){
                             $keyword=$_POST["search12"];
                             /*TODO: make and understand */
-                            $sqlmain= "select * from patient where pemail='$keyword' or pname='$keyword' or pname like '$keyword%' or pname like '%$keyword' or pname like '%$keyword%' ";
+                            // Search patients based on name or email matching the keyword, with various LIKE patterns for partial matches
+                            $sqlmain= "select * from patient
+                                       where pemail='$keyword' or pname='$keyword' 
+                                       or pname like '$keyword%' or pname like '%$keyword' or pname like '%$keyword%' ";
                             $selecttype="my";
                         }
                         
                         if(isset($_POST["filter"])){
                             if($_POST["showonly"]=='all'){
-                                $sqlmain= "select * from patient";
+                                $sqlmain= "select * from patient"; // Show all patients without filtering by doctor
                                 $selecttype="All";
                                 $current="All patients";
                             }else{
-                                $sqlmain= "select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.docid=$userid;";
+                                // Show only patients who have appointments with the logged-in doctor by joining appointment and schedule tables to filter by docid
+                                $sqlmain= "select * 
+                                           from appointment 
+                                           inner join patient on patient.pid=appointment.pid 
+                                           inner join schedule on schedule.scheduleid=appointment.scheduleid 
+                                           where schedule.docid=$userid;";
                                 $selecttype="My";
                                 $current="My patients Only";
                             }
                         }
                     }else{
-                        $sqlmain= "select * from appointment inner join patient on patient.pid=appointment.pid inner join schedule on schedule.scheduleid=appointment.scheduleid where schedule.docid=$userid;";
+                        // Default view shows only patients who have appointments with the logged-in doctor by joining appointment and schedule tables to filter by docid
+                        $sqlmain= "select * 
+                                   from appointment 
+                                   inner join patient on patient.pid=appointment.pid 
+                                   inner join schedule on schedule.scheduleid=appointment.scheduleid 
+                                   where schedule.docid=$userid;";
                         $selecttype="My";
                     }
 
@@ -353,7 +366,7 @@
         
             $id=$_GET["id"];
             $action=$_GET["action"];
-            $sqlmain= "select * from patient where pid=?";
+            $sqlmain= "select * from patient where pid=?"; // Get patient record based on patient ID passed in URL for viewing details
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("i",$id);
             $stmt->execute();

@@ -99,7 +99,7 @@
     // Doctor: Join to get doctor details (docname, docemail, doctel)
     // Prescription_Medicines: Get medicines for each prescription (prescription_id, medicine_id, dosage, frequency, duration, instructions)
     // Medicines: Join to get medicine details (medicine_name, generic_name)
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from patient where pemail=?"; // Get patient record based on session email to display user info and for use in features
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
@@ -187,7 +187,13 @@
                 
                 <?php
 
-                    $sqlmain= "select prescriptions.*, doctor.docname from prescriptions inner join doctor on prescriptions.doctor_id=doctor.docid where prescriptions.patient_id=$userid order by prescriptions.prescription_date desc";
+                    // Fetch prescriptions for the logged-in patient by joining with doctor table to get doctor details, ordered by prescription date descending
+                    $sqlmain= "select prescriptions.*, doctor.docname 
+                               from prescriptions 
+                               inner join doctor 
+                               on prescriptions.doctor_id=doctor.docid 
+                               where prescriptions.patient_id=$userid 
+                               order by prescriptions.prescription_date desc";
 
                 ?>
                   
@@ -248,7 +254,14 @@
         $id=$_GET["id"];
         $action=$_GET["action"];
         if($action=='view'){
-            $sqlmain= "select prescriptions.*, doctor.docname, doctor.docemail, doctor.doctel from prescriptions inner join doctor on prescriptions.doctor_id=doctor.docid where prescriptions.prescription_id=$id and prescriptions.patient_id=$userid";
+            // Fetch prescription details by joining with doctor table to get doctor info, 
+            // and then fetch associated medicines by joining prescription_medicines with medicines table 
+            // to get medicine details for the prescription ID passed in URL, ensuring it belongs to the logged-in patient
+            $sqlmain= "select prescriptions.*, doctor.docname, doctor.docemail, doctor.doctel 
+                       from prescriptions 
+                       inner join doctor 
+                       on prescriptions.doctor_id=doctor.docid 
+                       where prescriptions.prescription_id=$id and prescriptions.patient_id=$userid";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
             $docname=$row["docname"];
@@ -259,8 +272,12 @@
             $follow_up_date=$row["follow_up_date"];
             $follow_up_instructions=$row["follow_up_instructions"];
             
-            // Get medicines
-            $medicines_sql = "select prescription_medicines.*, medicines.medicine_name, medicines.generic_name from prescription_medicines inner join medicines on prescription_medicines.medicine_id=medicines.medicine_id where prescription_medicines.prescription_id=$id";
+            // Fetch medicines for the prescription by joining prescription_medicines with medicines table to get medicine details, filtering by prescription_id
+            $medicines_sql = "select prescription_medicines.*, medicines.medicine_name, medicines.generic_name 
+                              from prescription_medicines 
+                              inner join medicines 
+                              on prescription_medicines.medicine_id=medicines.medicine_id 
+                              where prescription_medicines.prescription_id=$id";
             $medicines_result = $database->query($medicines_sql);
             
             echo '

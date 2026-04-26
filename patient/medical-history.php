@@ -43,7 +43,7 @@
     // ========== DATABASE RELATIONS USED: Patient, Medical_History ==========
     // Patient: Get logged-in patient info (pid, pname)
     // Medical_History: Store and retrieve patient medical history (patient_id, condition_name, diagnosis_date, status, notes)
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from patient where pemail=?"; // Get patient record based on session email to display user info and for use in features
     $stmt = $database->prepare($sqlmain);
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
@@ -59,7 +59,9 @@
         $status = $_POST['status'];
         $notes = $_POST['notes'] ?? '';
         
-        $sql = "INSERT INTO medical_history (patient_id, condition_name, diagnosis_date, status, notes) VALUES (?, ?, ?, ?, ?)";
+        // Insert new medical history record for the patient
+        $sql = "INSERT INTO medical_history (patient_id, condition_name, diagnosis_date, status, notes) 
+                VALUES (?, ?, ?, ?, ?)";
         $stmt = $database->prepare($sql);
         $stmt->bind_param("issss", $userid, $condition_name, $diagnosis_date, $status, $notes);
         $stmt->execute();
@@ -146,7 +148,7 @@
                         $today = date('Y-m-d');
                         echo $today;
 
-                        $list110 = $database->query("select * from medical_history where patient_id=$userid");
+                        $list110 = $database->query("select * from medical_history where patient_id=$userid"); // Get medical history record count for the logged-in patient to display in heading
 
                         ?>
                         </p>
@@ -174,8 +176,10 @@
                 </tr>
                 
                 <?php
-
-                    $sqlmain= "select * from medical_history where patient_id=$userid order by diagnosis_date desc";
+                    // Retrieve medical history records for the logged-in patient, ordered by diagnosis date
+                    $sqlmain= "select * from medical_history 
+                               where patient_id=$userid 
+                               order by diagnosis_date desc";
 
                 ?>
                   
@@ -360,7 +364,9 @@
             </div>
             ';
         }elseif($action=='view'){
-            $sqlmain= "select * from medical_history where history_id=$id and patient_id=$userid";
+            // Get medical history record details based on history_id passed in URL for viewing
+            $sqlmain= "select * from medical_history 
+                       where history_id=$id and patient_id=$userid";
             $result= $database->query($sqlmain);
             $row=$result->fetch_assoc();
             $condition_name=$row["condition_name"];

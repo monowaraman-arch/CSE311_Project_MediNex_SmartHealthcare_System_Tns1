@@ -57,7 +57,14 @@
     // Patient: Filter by patient ID (pid)
     // Doctor: Join to get doctor name (docname)
     // Specialties: Used in appointment details to show doctor specialty
-    $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,doctor.docname,patient.pname,schedule.scheduledate,schedule.scheduletime,appointment.apponum,appointment.appodate from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid inner join patient on patient.pid=appointment.pid inner join doctor on schedule.docid=doctor.docid  where  patient.pid=$userid ";
+    $sqlmain= "select appointment.appoid,schedule.scheduleid,schedule.title,
+                      doctor.docname,patient.pname,schedule.scheduledate,
+                      schedule.scheduletime,appointment.apponum,appointment.appodate 
+                from schedule 
+                inner join appointment on schedule.scheduleid=appointment.scheduleid 
+                inner join patient on patient.pid=appointment.pid 
+                inner join doctor on schedule.docid=doctor.docid  
+                where  patient.pid=$userid ";
 
     if($_POST){
         //print_r($_POST);  
@@ -383,8 +390,15 @@
             $current_scheduleid = $_GET['scheduleid'] ?? null;
             
             // Get current appointment details
-            $app_sql = "select appointment.*, schedule.scheduledate, schedule.scheduletime, schedule.title, doctor.docname from appointment inner join schedule on appointment.scheduleid=schedule.scheduleid inner join doctor on schedule.docid=doctor.docid where appointment.appoid=$appoid and appointment.pid=$userid";
-            $app_result = $database->query($app_sql);
+            $app_sql = "select appointment.*, schedule.scheduledate,
+                               schedule.scheduletime, schedule.title,
+                               doctor.docname 
+                        from appointment 
+                        inner join schedule on appointment.scheduleid=schedule.scheduleid 
+                        inner join doctor on schedule.docid=doctor.docid 
+                        where appointment.appoid=$appoid and appointment.pid=$userid";
+            
+                        $app_result = $database->query($app_sql);
             if($app_result->num_rows==1){
                 $app_data = $app_result->fetch_assoc();
                 $current_date = $app_data['scheduledate'];
@@ -393,13 +407,19 @@
                 $title = $app_data['title'];
                 
                 // Get available schedules for the same doctor
-                $doc_sql = "select schedule.* from schedule inner join appointment on schedule.scheduleid=appointment.scheduleid where appointment.appoid=$appoid";
+                $doc_sql = "select schedule.* from schedule 
+                            inner join appointment on schedule.scheduleid=appointment.scheduleid 
+                            where appointment.appoid=$appoid";
+
                 $doc_result = $database->query($doc_sql);
                 $doc_data = $doc_result->fetch_assoc();
                 $docid = $doc_data['docid'];
                 
                 // Get other available schedules
-                $schedules_sql = "select * from schedule where docid=$docid and scheduledate >= CURDATE() order by scheduledate, scheduletime";
+                $schedules_sql = "select * from schedule 
+                                  where docid=$docid and scheduledate >= CURDATE() 
+                                  order by scheduledate, scheduletime";
+
                 $schedules_result = $database->query($schedules_sql);
                 
                 $error_msg = '';

@@ -44,7 +44,9 @@ session_start();
                 $booked_count = getScheduleBookedCount($database, $scheduleid);
                 
                 if($booked_count < $max_patients){
-                    $sql2="insert into appointment(pid,apponum,scheduleid,appodate,status) values ($userid,$apponum,$scheduleid,'$date','pending')";
+                    $sql2="insert into appointment(pid,apponum,scheduleid,appodate,status)
+                           values ($userid,$apponum,$scheduleid,'$date','pending')";
+                           
                     $result= $database->query($sql2);
                     //echo $apponom;
                     header("location: appointment.php?action=booking-added&id=".$apponum."&titleget=none");

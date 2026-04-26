@@ -115,8 +115,13 @@
             </table>
         </div>
         <?php
-
-                $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduledate>='$today'  order by schedule.scheduledate asc";
+                // Default view shows all upcoming sessions by joining schedule with doctor table to get doctor details, ordered by date ascending
+                $sqlmain= "select * 
+                           from schedule 
+                           inner join doctor 
+                           on schedule.docid=doctor.docid 
+                           where schedule.scheduledate>='$today'  
+                           order by schedule.scheduledate asc";
                 $sqlpt1="";
                 $insertkey="";
                 $q='';
@@ -127,7 +132,25 @@
                         if(!empty($_POST["search"])){
                           
                             $keyword=$_POST["search"];
-                            $sqlmain= "select * from schedule inner join doctor on schedule.docid=doctor.docid where schedule.scheduledate>='$today' and (doctor.docname='$keyword' or doctor.docname like '$keyword%' or doctor.docname like '%$keyword' or doctor.docname like '%$keyword%' or schedule.title='$keyword' or schedule.title like '$keyword%' or schedule.title like '%$keyword' or schedule.title like '%$keyword%' or schedule.scheduledate like '$keyword%' or schedule.scheduledate like '%$keyword' or schedule.scheduledate like '%$keyword%' or schedule.scheduledate='$keyword' )  order by schedule.scheduledate asc";
+                            // Search sessions by doctor name, schedule title, or date using joins to filter by keywords in both schedule and doctor tables, ordered by date ascending
+                            $sqlmain= "select * 
+                                       from schedule 
+                                       inner join doctor 
+                                       on schedule.docid=doctor.docid 
+                                       where schedule.scheduledate>='$today' 
+                                            and (doctor.docname='$keyword' 
+                                            or doctor.docname like '$keyword%' 
+                                            or doctor.docname like '%$keyword' 
+                                            or doctor.docname like '%$keyword%' 
+                                            or schedule.title='$keyword' 
+                                            or schedule.title like '$keyword%' 
+                                            or schedule.title like '%$keyword' 
+                                            or schedule.title like '%$keyword%' 
+                                            or schedule.scheduledate like '$keyword%' 
+                                            or schedule.scheduledate like '%$keyword' 
+                                            or schedule.scheduledate like '%$keyword%' 
+                                            or schedule.scheduledate='$keyword' )
+                                        order by schedule.scheduledate asc";
                             //echo $sqlmain;
                             $insertkey=$keyword;
                             $searchtype="Search Result : ";
@@ -155,8 +178,8 @@
                                         
                                         <?php
                                             echo '<datalist id="doctors">';
-                                            $list11 = $database->query("select DISTINCT * from  doctor;");
-                                            $list12 = $database->query("select DISTINCT * from  schedule GROUP BY title;");
+                                            $list11 = $database->query("select DISTINCT * from  doctor;"); // Get distinct doctor names for search suggestions by querying doctor table
+                                            $list12 = $database->query("select DISTINCT * from  schedule GROUP BY title;"); // Get distinct schedule titles for search suggestions by querying schedule table
                                             
 
                                             

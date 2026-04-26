@@ -187,7 +187,7 @@
             </div>
             ';
         }elseif($action=='view'){
-            $sqlmain= "select * from patient where pid=?";
+            $sqlmain= "select * from patient where pid=?"; // Get patient record based on patient ID passed in URL for viewing details
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("i", $id);
             $stmt->execute();
@@ -317,7 +317,7 @@
             </div>
             ';
         }elseif($action=='edit'){
-            $sqlmain= "select * from patient where pid=?";
+            $sqlmain= "select * from patient where pid=?"; // Get patient record based on patient ID passed in URL for editing details
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("i", $id);
             $stmt->execute();

@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = '<div class="alert alert-danger text-center">Please enter a valid email address.</div>';
     } else {
         // Check if email exists
-        $stmt = $database->prepare("SELECT * FROM webuser WHERE email = ?");
+        $stmt = $database->prepare("SELECT * FROM webuser WHERE email = ?"); // Check if email exists in webuser table for authentication
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();

@@ -36,7 +36,7 @@
     //import database
     include("../connection.php");
 
-    $sqlmain= "select * from patient where pemail=?";
+    $sqlmain= "select * from patient where pemail=?"; // Get patient record based on session email to display user info and for use in features
     $stmt = $database->prepare($sqlmain);  //prepare statement
     $stmt->bind_param("s",$useremail);
     $stmt->execute();
@@ -119,10 +119,10 @@
                             date_default_timezone_set('Asia/Dhaka');
                             $today = date('Y-m-d');
                             echo $today;
-                            $patientrow = $database->query("select * from patient;");
-                            $doctorrow = $database->query("select * from doctor;");
-                            $appointmentrow = $database->query("select * from appointment where appodate>='$today';");
-                            $schedulerow = $database->query("select * from schedule where scheduledate='$today';");
+                            $patientrow = $database->query("select * from patient;"); // Get total patient count for dashboard stats
+                            $doctorrow = $database->query("select * from doctor;"); // Get total doctor count for dashboard stats
+                            $appointmentrow = $database->query("select * from appointment where appodate>='$today';"); // Get upcoming appointment count for dashboard stats
+                            $schedulerow = $database->query("select * from schedule where scheduledate='$today';"); // Get today's schedule count for dashboard stats
                         ?></strong>
                     </div>
                     <div class="col-auto">
@@ -140,7 +140,7 @@
                                     <input type="search" name="search" class="form-control" placeholder="Search Doctor and We will Find The Session Available" list="doctors">
                                     <?php
                                         echo '<datalist id="doctors">'; //Doctor search input auto-suggestion
-                                        $list11 = $database->query("select docname,docemail from doctor;");
+                                        $list11 = $database->query("select docname,docemail from doctor;"); // Get all doctor names and emails for datalist options
                                         for ($y=0;$y<$list11->num_rows;$y++){
                                             $row00=$list11->fetch_assoc();
                                             echo "<option value='".$row00["docname"]."'>";

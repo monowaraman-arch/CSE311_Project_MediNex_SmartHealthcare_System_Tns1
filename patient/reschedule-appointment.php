@@ -44,7 +44,7 @@ session_start();
             $booked_count = getScheduleBookedCount($database, $new_scheduleid);
             
             if($booked_count < $max_patients){
-                // Update appointment
+                // Update appointment with new schedule and date, set status to 'rescheduled'
                 $sql = "UPDATE appointment SET scheduleid=?, appodate=?, status='rescheduled' WHERE appoid=? AND pid=?";
                 $stmt = $database->prepare($sql);
                 $stmt->bind_param("isii", $new_scheduleid, $new_date, $appoid, $userid);

@@ -24,7 +24,13 @@ include("../connection.php");
         if ($password==$cpassword){
             $error='3';
 
-            $sqlmain= "select patient.pid from patient inner join webuser on patient.pemail=webuser.email where webuser.email=?;";
+            // Check if the new email is already taken by another user
+            $sqlmain= "select patient.pid 
+                       from patient 
+                       inner join webuser 
+                       on patient.pemail=webuser.email 
+                       where webuser.email=?;";
+
             $stmt = $database->prepare($sqlmain);
             $stmt->bind_param("s",$email);
             $stmt->execute();
@@ -45,11 +51,14 @@ include("../connection.php");
                     
             }else{
 
-                //$sql1="insert into doctor(docemail,docname,docpassword,docnic,doctel,specialties) values('$email','$name','$password','$nic','$tele',$spec);";
-                $sql1="update patient set pemail='$email',pname='$name',ppassword='$password',pnic='$nic',ptel='$tele',paddress='$address',allergies='$allergies' where pid=$id ;";
+                // Update patient record with new details
+                $sql1="update patient 
+                       set pemail='$email',pname='$name',ppassword='$password',pnic='$nic',ptel='$tele',paddress='$address',allergies='$allergies' where pid=$id ;";
                 $database->query($sql1);
                 echo $sql1;
-                $sql1="update webuser set email='$email' where email='$oldemail' ;";
+                // If email was changed, update webuser record to maintain authentication
+                $sql1="update webuser 
+                       set email='$email' where email='$oldemail' ;";
                 $database->query($sql1);
                 echo $sql1;
                 

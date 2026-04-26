@@ -40,7 +40,7 @@
     // Patient: Get logged-in patient info
     // Doctor: Search and display all doctors with their details
     // Specialties: Join to display doctor specialties (id, sname)
-    $userrow = $database->query("select * from patient where pemail='$useremail'");
+    $userrow = $database->query("select * from patient where pemail='$useremail'"); // Get patient record based on session email
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
@@ -232,7 +232,7 @@
                                     $name=$row["docname"];
                                     $email=$row["docemail"];
                                     $spe=$row["specialties"];
-                                    $spcil_res= $database->query("select sname from specialties where id='$spe'");
+                                    $spcil_res= $database->query("select sname from specialties where id='$spe'"); // Get specialty name based on specialty ID
                                     $spcil_array= $spcil_res->fetch_assoc();
                                     $spcil_name=$spcil_array["sname"];
                                     echo '<tr>

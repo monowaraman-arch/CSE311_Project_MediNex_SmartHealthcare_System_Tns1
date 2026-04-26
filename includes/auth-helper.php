@@ -16,7 +16,9 @@ function verifyPassword($password, $hash) {
 
 function checkAppointmentOverlap($database, $scheduleid, $appodate, $exclude_appoid = null) {
     // Check if appointment slot is already booked
-    $sql = "SELECT COUNT(*) as count FROM appointment WHERE scheduleid = ? AND appodate = ? AND status != 'cancelled'";
+    $sql = "SELECT COUNT(*) as count 
+            FROM appointment 
+            WHERE scheduleid = ? AND appodate = ? AND status != 'cancelled'";
     if ($exclude_appoid) {
         $sql .= " AND appoid != ?";
     }

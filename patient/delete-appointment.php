@@ -17,7 +17,7 @@ session_start();
 if($_GET){
     include("../connection.php");
     $id=$_GET["id"];
-    $database->query("delete from appointment where appoid='$id';");
+    $database->query("delete from appointment where appoid='$id';"); // Delete appointment record based on appoid passed in URL
     header("location: appointment.php");
 }
 // ========== PATIENT DASHBOARD & FEATURES - APPOINTMENT MANAGEMENT SECTION END ==========

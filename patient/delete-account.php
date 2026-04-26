@@ -42,14 +42,14 @@ session_start();
         $result001 = $stmt->get_result();
         $email=($result001->fetch_assoc())["pemail"];
 
-        $sqlmain= "delete from webuser where email=?;";
+        $sqlmain= "delete from webuser where email=?;"; // Delete from webuser table first to remove authentication 
         $stmt = $database->prepare($sqlmain);
         $stmt->bind_param("s",$email);
         $stmt->execute();
         $result = $stmt->get_result();
 
 
-        $sqlmain= "delete from patient where pemail=?";
+        $sqlmain= "delete from patient where pemail=?"; // Then delete from patient table to remove personal data
         $stmt = $database->prepare($sqlmain);
         $stmt->bind_param("s",$email);
         $stmt->execute();
