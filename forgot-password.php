@@ -66,24 +66,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $token = bin2hex(random_bytes(32));
             $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
-            // Insert or update token
-            $stmt2 = $database->prepare("
-                INSERT INTO password_reset_tokens (email, token, expires_at, used)
-                VALUES (?, ?, ?, 0)
-                ON DUPLICATE KEY UPDATE token = VALUES(token), expires_at = VALUES(expires_at), used = 0
+            // Save the latest token for this email without depending on a unique DB constraint.
+            $existingTokenStmt = $database->prepare("
+                SELECT token_id
+                FROM password_reset_tokens
+                WHERE email = ?
+                ORDER BY token_id DESC
+                LIMIT 1
             ");
-            $stmt2->bind_param("sss", $email, $token, $expires);
-            $stmt2->execute();
+            $existingTokenStmt->bind_param("s", $email);
+            $existingTokenStmt->execute();
+            $existingTokenResult = $existingTokenStmt->get_result();
 
-            // Localhost testing reset link
-            $reset_link = "http://localhost/Healthcare/reset-password.php?token=" . urlencode($token);
+            $tokenSaved = false;
+            if ($existingTokenResult->num_rows === 1) {
+                $tokenId = (int) $existingTokenResult->fetch_assoc()['token_id'];
+                $updateTokenStmt = $database->prepare("
+                    UPDATE password_reset_tokens
+                    SET token = ?, expires_at = ?, used = 0
+                    WHERE token_id = ?
+                ");
+                $updateTokenStmt->bind_param("ssi", $token, $expires, $tokenId);
+                $tokenSaved = $updateTokenStmt->execute();
+            } else {
+                $insertTokenStmt = $database->prepare("
+                    INSERT INTO password_reset_tokens (email, token, expires_at, used)
+                    VALUES (?, ?, ?, 0)
+                ");
+                $insertTokenStmt->bind_param("sss", $email, $token, $expires);
+                $tokenSaved = $insertTokenStmt->execute();
+            }
 
-            $error = '<div class="alert alert-success text-center">
-                        Password reset link generated successfully.<br>
-                        <strong>Click this link to reset password:</strong><br>
-                        <a href="' . $reset_link . '" target="_blank">' . $reset_link . '</a><br><br>
-                        <small class="text-danger">For localhost testing only. In production, this link should be sent by email.</small>
-                      </div>';
+            if ($tokenSaved) {
+                $invalidateOldTokensStmt = $database->prepare("
+                    UPDATE password_reset_tokens
+                    SET used = 1
+                    WHERE email = ? AND token <> ?
+                ");
+                $invalidateOldTokensStmt->bind_param("ss", $email, $token);
+                $invalidateOldTokensStmt->execute();
+
+                $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                $projectPath = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
+                $projectPath = rtrim($projectPath, '/');
+                $reset_link = $scheme . '://' . $_SERVER['HTTP_HOST'] . $projectPath . '/reset-password.php?token=' . urlencode($token);
+                $safeResetLink = htmlspecialchars($reset_link, ENT_QUOTES, 'UTF-8');
+
+                $error = '<div class="alert alert-success text-center">
+                            Password reset link generated successfully.<br>
+                            <strong>Click this link to reset password:</strong><br>
+                            <a href="' . $safeResetLink . '" target="_blank">' . $safeResetLink . '</a><br><br>
+                            <small class="text-danger">For localhost testing only. In production, this link should be sent by email.</small>
+                          </div>';
+            } else {
+                $error = '<div class="alert alert-danger text-center">Unable to generate a reset link right now. Please try again.</div>';
+            }
         } else {
             $error = '<div class="alert alert-danger text-center">Email not found in our system.</div>';
         }

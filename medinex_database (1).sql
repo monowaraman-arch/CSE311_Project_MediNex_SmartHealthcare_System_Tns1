@@ -140,7 +140,7 @@ CREATE TABLE `password_reset_tokens` (
   `token_id` int(11) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
   `token` varchar(255) DEFAULT NULL,
-  `expires_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `expires_at` timestamp NULL DEFAULT NULL,
   `used` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -383,7 +383,9 @@ ALTER TABLE `medicines`
 -- Indexes for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-  ADD PRIMARY KEY (`token_id`);
+  ADD PRIMARY KEY (`token_id`),
+  ADD UNIQUE KEY `uq_password_reset_tokens_token` (`token`),
+  ADD KEY `idx_password_reset_tokens_email` (`email`);
 
 --
 -- Indexes for table `patient`
