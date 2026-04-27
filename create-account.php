@@ -93,7 +93,8 @@ if($_POST){
             // Insert patient data
             // Age is calculated dynamically from date of birth (pdob) when displaying in account details
             $hashed_password = hashPassword($newpassword);
-            $database->query("insert into patient(pemail,pname,ppassword, paddress, pnic,pdob,ptel) values('$email','$name','$hashed_password','$address','$nic','$dob','$tele');");
+            $database->query("insert into patient(pemail,pname,ppassword, paddress, pnic,pdob,ptel) 
+                              values('$email','$name','$hashed_password','$address','$nic','$dob','$tele');");
             $database->query("insert into webuser values('$email','p')");
 
             //print_r("insert into patient values($pid,'$email','$fname','$lname','$newpassword','$address','$nic','$dob','$tele');");
