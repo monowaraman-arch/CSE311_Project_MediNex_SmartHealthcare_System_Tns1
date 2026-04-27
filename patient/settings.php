@@ -47,7 +47,7 @@
     $username=$userfetch["pname"];
     ?>
     <!--  PATIENT DASHBOARD & FEATURES - PATIENT SETTINGS SECTION START -->
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
             <table class="menu-container" >
                 <tr>
@@ -95,6 +95,11 @@
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-appoinment">
                         <a href="prescriptions.php" class="non-style-link-menu"><div><p class="menu-text">My Prescriptions</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-appoinment">
+                        <a href="medical-history.php" class="non-style-link-menu"><div><p class="menu-text">Medical History</p></div></a>
                     </td>
                 </tr>
                 <tr class="menu-row" >

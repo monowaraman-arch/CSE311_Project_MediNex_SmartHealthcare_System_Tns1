@@ -57,7 +57,7 @@
     $today = date('Y-m-d');
     ?>
     <!--  PATIENT DASHBOARD & FEATURES - SCHEDULE VIEWING SECTION START -->
- <div class="container">
+    <div class="container app-shell">
      <div class="menu">
      <table class="menu-container" >
              <tr>
@@ -107,6 +107,11 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-appoinment">
+                        <a href="medical-history.php" class="non-style-link-menu"><div><p class="menu-text">Medical History</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row" >
                     <td class="menu-btn menu-icon-settings">
                         <a href="settings.php" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
                     </td>
@@ -139,17 +144,17 @@
                                        on schedule.docid=doctor.docid 
                                        where schedule.scheduledate>='$today' 
                                             and (doctor.docname='$keyword' 
-                                            or doctor.docname like '$keyword%' 
-                                            or doctor.docname like '%$keyword' 
-                                            or doctor.docname like '%$keyword%' 
-                                            or schedule.title='$keyword' 
-                                            or schedule.title like '$keyword%' 
-                                            or schedule.title like '%$keyword' 
-                                            or schedule.title like '%$keyword%' 
-                                            or schedule.scheduledate like '$keyword%' 
-                                            or schedule.scheduledate like '%$keyword' 
-                                            or schedule.scheduledate like '%$keyword%' 
-                                            or schedule.scheduledate='$keyword' )
+                                                or doctor.docname like '$keyword%' 
+                                                or doctor.docname like '%$keyword' 
+                                                or doctor.docname like '%$keyword%' 
+                                                or schedule.title='$keyword' 
+                                                or schedule.title like '$keyword%' 
+                                                or schedule.title like '%$keyword' 
+                                                or schedule.title like '%$keyword%' 
+                                                or schedule.scheduledate like '$keyword%' 
+                                                or schedule.scheduledate like '%$keyword' 
+                                                or schedule.scheduledate like '%$keyword%' 
+                                                or schedule.scheduledate='$keyword' )
                                         order by schedule.scheduledate asc";
                             //echo $sqlmain;
                             $insertkey=$keyword;

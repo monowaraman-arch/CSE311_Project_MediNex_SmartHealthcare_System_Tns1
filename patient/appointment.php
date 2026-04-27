@@ -64,21 +64,82 @@
                 inner join appointment on schedule.scheduleid=appointment.scheduleid 
                 inner join patient on patient.pid=appointment.pid 
                 inner join doctor on schedule.docid=doctor.docid  
-                where  patient.pid=$userid ";
+                where patient.pid=?";
 
-    if($_POST){
-        //print_r($_POST);  
-        if(!empty($_POST["sheduledate"])){
-            $sheduledate=$_POST["sheduledate"];
-            $sqlmain.=" and schedule.scheduledate='$sheduledate' ";
-        };
-        //echo $sqlmain;
+    $searchkeyword = "";
+    $types = "i";
+    $params = [$userid];
+
+    if($_SERVER["REQUEST_METHOD"]=="POST"){
+        $searchkeyword = trim($_POST["search"] ?? "");
+
+        if($searchkeyword !== ""){
+            $likeStart = $searchkeyword.'%';
+            $likeEnd = '%'.$searchkeyword;
+            $likeAny = '%'.$searchkeyword.'%';
+
+            $sqlmain .= " and (
+                            doctor.docname=? 
+                            or doctor.docname like ? 
+                            or doctor.docname like ? 
+                            or doctor.docname like ? 
+                            or schedule.title=? 
+                            or schedule.title like ? 
+                            or schedule.title like ? 
+                            or schedule.title like ? 
+                            or schedule.scheduledate=? 
+                            or schedule.scheduledate like ? 
+                            or schedule.scheduledate like ? 
+                            or schedule.scheduledate like ? 
+                            or appointment.appodate=? 
+                            or appointment.appodate like ? 
+                            or appointment.appodate like ? 
+                            or appointment.appodate like ?
+                        )";
+
+            $types .= str_repeat("s", 16);
+            $params = array_merge(
+                $params,
+                [
+                    $searchkeyword, $likeStart, $likeEnd, $likeAny,
+                    $searchkeyword, $likeStart, $likeEnd, $likeAny,
+                    $searchkeyword, $likeStart, $likeEnd, $likeAny,
+                    $searchkeyword, $likeStart, $likeEnd, $likeAny,
+                ]
+            );
+        }
     }
 
-    $sqlmain.="order by appointment.appodate  asc";
-    $result= $database->query($sqlmain);
+    $sqlmain .= " order by appointment.appodate asc";
+    $stmt = $database->prepare($sqlmain);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Build datalist options from this patient's existing appointments.
+    $searchDataStmt = $database->prepare(
+        "select doctor.docname, schedule.title, schedule.scheduledate, appointment.appodate
+         from appointment
+         inner join schedule on appointment.scheduleid=schedule.scheduleid
+         inner join doctor on schedule.docid=doctor.docid
+         where appointment.pid=?
+         order by appointment.appodate desc"
+    );
+    $searchDataStmt->bind_param("i", $userid);
+    $searchDataStmt->execute();
+    $searchDataResult = $searchDataStmt->get_result();
+    $searchOptions = [];
+
+    while($searchRow = $searchDataResult->fetch_assoc()){
+        $searchOptions[] = $searchRow["docname"];
+        $searchOptions[] = $searchRow["title"];
+        $searchOptions[] = $searchRow["scheduledate"];
+        $searchOptions[] = $searchRow["appodate"];
+    }
+
+    $searchOptions = array_unique(array_filter($searchOptions));
     ?>
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
         <table class="menu-container" >
                 <tr>
@@ -128,6 +189,11 @@
                     </td>
                 </tr>
                 <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-appoinment">
+                        <a href="medical-history.php" class="non-style-link-menu"><div><p class="menu-text">Medical History</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row" >
                     <td class="menu-btn menu-icon-settings">
                         <a href="settings.php" class="non-style-link-menu"><div><p class="menu-text">Settings</p></div></a>
                     </td>
@@ -138,12 +204,22 @@
         <!-- APPOINTMENT MANAGEMENT HEADER SECTION START -->
         <div class="dash-body">
             <div class="container-fluid mt-3">
-                <div class="row mb-3">
+                <div class="row mb-3 align-items-center">
                     <div class="col-auto">
                         <a href="appointment.php" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Back</a>
                     </div>
                     <div class="col">
-                        <h4 class="mb-0">My Bookings history</h4>
+                        <form action="" method="post" class="header-search">
+                            <input type="search" name="search" class="input-text header-searchbar" placeholder="Search Doctor name or Session title or Date (YYYY-MM-DD)" list="appointments" value="<?php echo htmlspecialchars($searchkeyword, ENT_QUOTES, 'UTF-8'); ?>">&nbsp;&nbsp;
+                            <datalist id="appointments">
+                                <?php
+                                foreach($searchOptions as $option){
+                                    echo "<option value=\"" . htmlspecialchars($option, ENT_QUOTES, 'UTF-8') . "\"></option>";
+                                }
+                                ?>
+                            </datalist>
+                            <input type="Submit" value="Search" class="login-btn btn-primary" style="padding-left: 25px;padding-right: 25px;padding-top: 10px;padding-bottom: 10px;">
+                        </form>
                     </div>
                     <div class="col-auto text-end">
                         <small class="text-muted d-block">Today's Date</small>
@@ -155,24 +231,14 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col">
+                        <h4 class="mb-0">My Bookings history</h4>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
                         <h6>My Bookings (<?php echo $result->num_rows; ?>)</h6>
                     </div>
                 </div>
-                <!--  APPOINTMENT FILTER SECTION START-->
-                <div class="row mb-3">
-                    <div class="col">
-                        <form action="" method="post" class="row g-3 align-items-end">
-                            <div class="col-auto">
-                                <label class="form-label">Date:</label>
-                                <input type="date" name="sheduledate" class="form-control">
-                            </div>
-                            <div class="col-auto">
-                                <button type="submit" name="filter" class="btn btn-primary">Filter</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <!--  APPOINTMENT FILTER SECTION END  -->
                 <!--  APPOINTMENT MANAGEMENT HEADER SECTION END  -->
                 
                 <!-- APPOINTMENT CARDS DISPLAY SECTION START  -->

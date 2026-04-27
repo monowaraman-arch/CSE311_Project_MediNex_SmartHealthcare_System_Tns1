@@ -50,7 +50,7 @@
     //echo $userid;
     //echo $username;
     ?>
-    <div class="container">
+    <div class="container app-shell">
     <div class="menu">
             <table class="menu-container" border="0">
                 <tr>
@@ -241,7 +241,10 @@
                                         <td>'.substr($email,0,20).'</td>
                                         <td>'.substr($dob,0,10).'</td>
                                         <td>
-                                            <a href="?action=view&id='.$pid.'" class="btn btn-sm btn-outline-info">View</a>
+                                            <div class="d-flex gap-2">
+                                                <a href="?action=view&id='.$pid.'" class="btn btn-sm btn-outline-info">View</a>
+                                                <a href="medical-history.php?patient_id='.$pid.'" class="btn btn-sm btn-outline-primary">History</a>
+                                            </div>
                                         </td>
                                     </tr>';
                                     

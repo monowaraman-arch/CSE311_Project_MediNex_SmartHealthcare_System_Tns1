@@ -64,7 +64,7 @@
     $common_diagnoses = $database->query("SELECT diagnosis, COUNT(*) as count FROM prescriptions WHERE diagnosis IS NOT NULL AND diagnosis != '' GROUP BY diagnosis ORDER BY count DESC LIMIT 10");
 
     ?>
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
         <table class="menu-container" border="0">
                 <tr>

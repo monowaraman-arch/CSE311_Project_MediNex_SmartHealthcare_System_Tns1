@@ -52,25 +52,8 @@
     $userid= $userfetch["pid"];
     $username=$userfetch["pname"];
 
-    // Handle form submission
-    if($_POST && isset($_POST['add_history'])){
-        $condition_name = $_POST['condition_name'];
-        $diagnosis_date = $_POST['diagnosis_date'];
-        $status = $_POST['status'];
-        $notes = $_POST['notes'] ?? '';
-        
-        // Insert new medical history record for the patient
-        $sql = "INSERT INTO medical_history (patient_id, condition_name, diagnosis_date, status, notes) 
-                VALUES (?, ?, ?, ?, ?)";
-        $stmt = $database->prepare($sql);
-        $stmt->bind_param("issss", $userid, $condition_name, $diagnosis_date, $status, $notes);
-        $stmt->execute();
-        
-        header("location: medical-history.php?action=history-added");
-    }
-
     ?>
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
         <table class="menu-container" border="0">
                 <tr>
@@ -168,9 +151,8 @@
                 </tr>
                 <tr>
                     <td colspan="4" style="padding-top:10px;width: 100%;" >
-                        <div style="display: flex;margin-left: 45px;">
-                        <a href="?action=add-history&id=none&error=0" class="non-style-link"><button  class="login-btn btn-primary btn button-icon"  style="margin-left:25px;background-image: url('../img/icons/add.svg');">Add Medical History</font></button>
-                        </a>
+                        <div style="margin-left: 45px; margin-right: 45px;" class="alert alert-info">
+                            Your doctor maintains these records. You can view your medical history here, but only a doctor can add or edit it.
                         </div>
                     </td>
                 </tr>
@@ -286,84 +268,7 @@
     if($_GET){
         $id=$_GET["id"];
         $action=$_GET["action"];
-        if($action=='add-history'){
-            date_default_timezone_set('Asia/Dhaka');
-            $today = date('Y-m-d');
-            
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2>Add Medical History</h2>
-                        <a class="close" href="medical-history.php">&times;</a>
-                        <div class="content">
-                            <form action="" method="POST">
-                            <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                                <tr>
-                                    <td>
-                                        <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Add Medical History.</p><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="condition_name" class="form-label">Condition Name: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <input type="text" name="condition_name" class="input-text" placeholder="e.g. Diabetes, Hypertension" required><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="diagnosis_date" class="form-label">Diagnosis Date: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <input type="date" name="diagnosis_date" class="input-text" max="'.$today.'" required><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="status" class="form-label">Status: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <select name="status" class="input-text" required>
-                                            <option value="Active">Active</option>
-                                            <option value="Resolved">Resolved</option>
-                                            <option value="Chronic">Chronic</option>
-                                            <option value="Under Treatment">Under Treatment</option>
-                                        </select><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="notes" class="form-label">Notes (Optional): </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <textarea name="notes" class="input-text" rows="3" placeholder="Additional notes about this condition"></textarea><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <input type="submit" name="add_history" value="Add History" class="login-btn btn-primary btn">
-                                        <a href="medical-history.php"><input type="button" value="Cancel" class="login-btn btn-primary-soft btn"></a>
-                                    </td>
-                                </tr>
-                            </table>
-                            </form>
-                        </div>
-                    </center>
-                    <br><br>
-            </div>
-            </div>
-            ';
-        }elseif($action=='view'){
+        if($action=='view'){
             // Get medical history record details based on history_id passed in URL for viewing
             $sqlmain= "select * from medical_history 
                        where history_id=$id and patient_id=$userid";
@@ -435,25 +340,6 @@
             </div>
             </div>
             ';  
-        }elseif($action=='history-added'){
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                    <br><br>
-                        <h2>Medical History Added Successfully.</h2>
-                        <a class="close" href="medical-history.php">&times;</a>
-                        <div class="content">
-                        Your medical history has been recorded.<br><br>
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        <a href="medical-history.php" class="non-style-link"><button  class="btn-primary btn"  style="display: flex;justify-content: center;align-items: center;margin:10px;padding:10px;"><font class="tn-in-text">&nbsp;&nbsp;OK&nbsp;&nbsp;</font></button></a>
-                        <br><br><br><br>
-                        </div>
-                    </center>
-            </div>
-            </div>
-            ';
         }
     }
 
@@ -462,4 +348,3 @@
 
 </body>
 </html>
-

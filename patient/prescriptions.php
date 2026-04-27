@@ -109,7 +109,7 @@
     $username=$userfetch["pname"];
 
     ?>
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
         <table class="menu-container" border="0">
                 <tr>
@@ -156,6 +156,11 @@
                 <tr class="menu-row" >
                     <td class="menu-btn menu-icon-appoinment menu-active menu-icon-appoinment-active">
                         <a href="prescriptions.php" class="non-style-link-menu non-style-link-menu-active"><div><p class="menu-text">My Prescriptions</p></div></a>
+                    </td>
+                </tr>
+                <tr class="menu-row" >
+                    <td class="menu-btn menu-icon-appoinment">
+                        <a href="medical-history.php" class="non-style-link-menu"><div><p class="menu-text">Medical History</p></div></a>
                     </td>
                 </tr>
                 <tr class="menu-row" >

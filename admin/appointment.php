@@ -38,7 +38,7 @@
 
     
     ?>
-    <div class="container">
+    <div class="container app-shell">
         <div class="menu">
             <table class="menu-container" border="0">
                 <tr>
