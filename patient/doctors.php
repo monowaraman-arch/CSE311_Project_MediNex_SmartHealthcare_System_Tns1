@@ -36,6 +36,7 @@
 
     //import database
     include("../connection.php");
+    include("../includes/auth-helper.php");
     //  DATABASE RELATIONS USED: Patient, Doctor, Specialties 
     // Patient: Get logged-in patient info
     // Doctor: Search and display all doctors with their details
@@ -312,25 +313,18 @@
             ';
             // drop confirmation popup end
         } elseif ($action == 'view') {
-            $sqlmain = "SELECT * FROM doctor WHERE docid=?";
-            $stmt = $database->prepare($sqlmain);
-            $stmt->bind_param("i", $id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
+            $doctor = fetchDoctorPopupDetails($database, (int) $id);
 
-            $name = $row["docname"];
-            $email = $row["docemail"];
-            $spe = $row["specialties"];
+            if ($doctor === null) {
+                header("location: doctors.php");
+                exit;
+            }
 
-            $stmt = $database->prepare("select sname from specialties where id=?");
-            $stmt->bind_param("s", $spe);
-            $stmt->execute();
-            $spcil_res = $stmt->get_result();
-            $spcil_array = $spcil_res->fetch_assoc();
-            $spcil_name = $spcil_array["sname"];
-            $nic = $row['docnic'];
-            $tele = $row['doctel'];
+            $name = $doctor["docname"];
+            $email = $doctor["docemail"];
+            $spcil_name = $doctor["sname"] ?? "";
+            $nic = $doctor['docnic'];
+            $tele = $doctor['doctel'];
             // doctor details view popup start
             echo '
             <div id="popup1" class="overlay">

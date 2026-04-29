@@ -1,8 +1,9 @@
 <?php
 //  AUTHENTICATION & SECURITY - HELPER FUNCTIONS SECTION START 
-//  DATABASE RELATIONS USED: Schedule, Appointment 
+//  DATABASE RELATIONS USED: Schedule, Appointment, Doctor, Specialties
 // Schedule: Check schedule availability (getScheduleMaxPatients function)
 // Appointment: Check appointment overlap and booking count (checkAppointmentOverlap, getScheduleBookedCount functions)
+// Doctor/Specialties: Fetch doctor popup details with specialty name (fetchDoctorPopupDetails function)
 
 function hashPassword($password) {
     // Hash password using bcrypt
@@ -55,7 +56,23 @@ function getScheduleBookedCount($database, $scheduleid) {
     $row = $result->fetch_assoc();
     return $row['count'] ?? 0;
 }
+
+function fetchDoctorPopupDetails(mysqli $database, int $doctorId): ?array {
+    // Get doctor details and specialty for patient-side view popups
+    $statement = $database->prepare(
+        "SELECT doctor.docname, doctor.docemail, doctor.docnic, doctor.doctel, specialties.sname
+         FROM doctor
+         LEFT JOIN specialties ON doctor.specialties = specialties.id
+         WHERE doctor.docid = ?"
+    );
+    $statement->bind_param("i", $doctorId);
+    $statement->execute();
+    $result = $statement->get_result();
+    $row = $result->fetch_assoc();
+    $statement->close();
+
+    return $row ?: null;
+}
 // ========== AUTHENTICATION & SECURITY - HELPER FUNCTIONS SECTION END ==========
 
 ?>
-

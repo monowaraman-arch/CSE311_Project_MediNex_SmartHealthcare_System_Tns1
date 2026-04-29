@@ -165,23 +165,6 @@ function buildPatientAppointmentPopup(mysqli $database, int $userId): ?array
     }
 }
 
-function fetchDoctorPopupDetails(mysqli $database, int $doctorId): ?array
-{
-    $statement = $database->prepare(
-        'SELECT doctor.docname, doctor.docemail, doctor.docnic, doctor.doctel, specialties.sname
-         FROM doctor
-         LEFT JOIN specialties ON doctor.specialties = specialties.id
-         WHERE doctor.docid = ?'
-    );
-    $statement->bind_param('i', $doctorId);
-    $statement->execute();
-    $result = $statement->get_result();
-    $row = $result->fetch_assoc();
-    $statement->close();
-
-    return $row ?: null;
-}
-
 function fetchReschedulePopupDetails(
     mysqli $database,
     int $userId,

@@ -81,7 +81,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $tokenSaved = false;
             if ($existingTokenResult->num_rows === 1) {
                 $tokenId = (int) $existingTokenResult->fetch_assoc()['token_id'];
-                $updateTokenStmt = $database->prepare("
+                $updateTokenStmt = $database->prepare(
+                // Update the existing token record with the new token and expiration time. This allows only one valid token per email at a time.    
+                "
                     UPDATE password_reset_tokens
                     SET token = ?, expires_at = ?, used = 0
                     WHERE token_id = ?
@@ -89,7 +91,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $updateTokenStmt->bind_param("ssi", $token, $expires, $tokenId);
                 $tokenSaved = $updateTokenStmt->execute();
             } else {
-                $insertTokenStmt = $database->prepare("
+                $insertTokenStmt = $database->prepare(
+                // Insert a new token if no existing token is found for this email. This allows multiple tokens but only the latest one will be valid.    
+                "
                     INSERT INTO password_reset_tokens (email, token, expires_at, used)
                     VALUES (?, ?, ?, 0)
                 ");
@@ -98,7 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if ($tokenSaved) {
-                $invalidateOldTokensStmt = $database->prepare("
+                $invalidateOldTokensStmt = $database->prepare(
+                // Invalidate all other tokens for this email except the current one to prevent multiple valid tokens    
+                "
                     UPDATE password_reset_tokens
                     SET used = 1
                     WHERE email = ? AND token <> ?
