@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/patient-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/patient-settings.css">
     <title>Settings</title>
     <style>
         .dashbord-tables{animation: transitionIn-Y-over 0.5s;}
@@ -166,31 +168,58 @@
             </div>
         </div>
     </div>
-    <?php 
+    <?php
+    if (!function_exists('settings_h')) {
+        function settings_h($value) {
+            return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        }
+    }
+
+    if (!function_exists('settings_age')) {
+        function settings_age($dob) {
+            if (empty($dob) || $dob === '0000-00-00') {
+                return 'Not set';
+            }
+
+            try {
+                $dobDate = new DateTime($dob);
+                $today = new DateTime();
+                return $today->diff($dobDate)->y . ' years';
+            } catch (Exception $exception) {
+                return 'Not set';
+            }
+        }
+    }
+
     if($_GET){
-        
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id = (int) ($_GET["id"] ?? 0);
+        $action = $_GET["action"] ?? "";
+
         if($action=='drop'){
-            $nameget=$_GET["name"];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2>Are you sure?</h2>
-                        <a class="close" href="settings.php">&times;</a>
-                        <div class="content">
-                            You want to delete Your Account<br>('.substr($nameget,0,40).').
-                            
+            $nameget = $_GET["name"] ?? $username;
+            $displayName = settings_h(substr($nameget,0,40));
+            ?>
+            <div id="popup1" class="overlay settings-modal-overlay">
+                <div class="popup settings-modal settings-confirm-modal">
+                    <a class="close settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <div class="settings-confirm-icon settings-danger-icon">
+                        <i class="bi bi-person-x"></i>
+                    </div>
+                    <h2>Delete Account?</h2>
+                    <p class="settings-confirm-copy">This will permanently remove your MediNex account.</p>
+                    <div class="settings-summary-card">
+                        <div>
+                            <span>Account Holder</span>
+                            <strong><?php echo $displayName; ?></strong>
                         </div>
-                        <div class="d-flex justify-content-center gap-2">
-                        <a href="delete-account.php?id='.$id.'" class="btn btn-primary">Yes</a>
-                        <a href="settings.php" class="btn btn-secondary">No</a>
-                        </div>
-                    </center>
+                    </div>
+                    <div class="settings-modal-actions">
+                        <a href="settings.php" class="btn btn-primary-soft">Keep Account</a>
+                        <a href="delete-account.php?id=<?php echo $id; ?>" class="btn btn-danger">Delete Account</a>
+                    </div>
+                </div>
             </div>
-            </div>
-            ';
+            <?php
         }elseif($action=='view'){
             $sqlmain= "select * from patient where pid=?"; // Get patient record based on patient ID passed in URL for viewing details
             $stmt = $database->prepare($sqlmain);
@@ -198,129 +227,65 @@
             $stmt->execute();
             $result = $stmt->get_result();
             $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $address=$row["paddress"];
-            
-           
-            $dob=$row["pdob"];
-            $nic=$row['pnic'];
-            $tele=$row['ptel'];
-            // Calculate age from date of birth
-            $dob_date = new DateTime($dob);
-            $today = new DateTime();
-            $age = $today->diff($dob_date)->y;
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2></h2>
-                        <a class="close" href="settings.php">&times;</a>
-                        <div class="content">
-                            MediNex<br>
-                            
-                        </div>
-                        <div style="display: flex;justify-content: center;">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                        
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                                </td>
-                            </tr>
-                            
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Name: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Email: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Tele" class="form-label">Telephone: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Address: </label>
-                                    
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$address.'<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Date of Birth: </label>
-                                    
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$dob.'<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Age: </label>
-                                    
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$age.' years<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <a href="settings.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                                
-                                    
-                                </td>
-                
-                            </tr>
-                           
 
-                        </table>
+            if($row){
+                $age = settings_age($row["pdob"]);
+                ?>
+                <div id="popup1" class="overlay settings-modal-overlay">
+                    <div class="popup settings-modal settings-details-modal">
+                        <a class="close settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                        <div class="settings-modal-header">
+                            <p>MediNex</p>
+                            <h2>View Details</h2>
                         </div>
-                    </center>
-                    <br><br>
-            </div>
-            </div>
-            ';
+                        <div class="settings-profile-card">
+                            <div class="settings-profile-mark"><?php echo settings_h(substr($row["pname"], 0, 1)); ?></div>
+                            <div>
+                                <h3><?php echo settings_h($row["pname"]); ?></h3>
+                                <p><?php echo settings_h($row["pemail"]); ?></p>
+                            </div>
+                        </div>
+                        <div class="settings-detail-grid">
+                            <div>
+                                <span>Name</span>
+                                <strong><?php echo settings_h($row["pname"]); ?></strong>
+                            </div>
+                            <div>
+                                <span>Email</span>
+                                <strong><?php echo settings_h($row["pemail"]); ?></strong>
+                            </div>
+                            <div>
+                                <span>NIC</span>
+                                <strong><?php echo settings_h($row["pnic"]); ?></strong>
+                            </div>
+                            <div>
+                                <span>Telephone</span>
+                                <strong><?php echo settings_h($row["ptel"]); ?></strong>
+                            </div>
+                            <div>
+                                <span>Date of Birth</span>
+                                <strong><?php echo settings_h($row["pdob"]); ?></strong>
+                            </div>
+                            <div>
+                                <span>Age</span>
+                                <strong><?php echo settings_h($age); ?></strong>
+                            </div>
+                            <div class="settings-detail-wide">
+                                <span>Address</span>
+                                <strong><?php echo settings_h($row["paddress"]); ?></strong>
+                            </div>
+                            <div class="settings-detail-wide">
+                                <span>Allergies</span>
+                                <strong><?php echo settings_h($row["allergies"] ?: "None listed"); ?></strong>
+                            </div>
+                        </div>
+                        <div class="settings-modal-actions">
+                            <a href="settings.php" class="btn btn-primary">OK</a>
+                        </div>
+                    </div>
+                </div>
+                <?php
+            }
         }elseif($action=='edit'){
             $sqlmain= "select * from patient where pid=?"; // Get patient record based on patient ID passed in URL for editing details
             $stmt = $database->prepare($sqlmain);
@@ -328,193 +293,109 @@
             $stmt->execute();
             $result = $stmt->get_result();
             $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $dob=$row["pdob"];
-            // Calculate age from date of birth for edit form display
-            $dob_date = new DateTime($dob);
-            $today = new DateTime();
-            $age = $today->diff($dob_date)->y;
-            $address=$row["paddress"];
-            $nic=$row['pnic'];
-            $tele=$row['ptel'];
 
-            $error_1=$_GET["error"];
+            if($row){
+                $age = settings_age($row["pdob"]);
+                $error_1=$_GET["error"] ?? '0';
                 $errorlist= array(
-                    '1'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
-                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
-                    '3'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
-                    '4'=>"",
+                    '1'=>'Already have an account for this email address.',
+                    '2'=>'Password confirmation error. Please confirm your password again.',
+                    '3'=>'',
+                    '4'=>'',
                     '0'=>'',
-
                 );
+                $errorMessage = $errorlist[$error_1] ?? '';
 
-            if($error_1!='4'){
-                    echo '
-                    <div id="popup1" class="overlay">
-                            <div class="popup">
-                            <center>
-                            
-                                <a class="close" href="settings.php">&times;</a> 
-                                <div style="display: flex;justify-content: center;">
-                                <div class="abc">
-                                <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                                <tr>
-                                        <td class="label-td" colspan="2">'.
-                                            $errorlist[$error_1]
-                                        .'</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Edit User Account Details.</p>
-                                        User ID : '.$id.' (Auto Generated)<br><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <form action="edit-user.php" method="POST" class="add-new-form">
-                                            <label for="Email" class="form-label">Email: </label>
-                                            <input type="hidden" value="'.$id.'" name="id00">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                        <input type="hidden" name="oldemail" value="'.$email.'" >
-                                        <input type="email" name="email" class="input-text" placeholder="Email Address" value="'.$email.'" required><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        
-                                        <td class="label-td" colspan="2">
-                                            <label for="name" class="form-label">Name: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="text" name="name" class="input-text" placeholder="Doctor Name" value="'.$name.'" required><br>
-                                        </td>
-                                        
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="nic" class="form-label">NIC: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="text" name="nic" class="input-text" placeholder="NIC Number" value="'.$nic.'" required><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="Tele" class="form-label">Telephone: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="tel" name="Tele" class="input-text" placeholder="Telephone Number" value="'.$tele.'" required><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="spec" class="form-label">Date of Birth: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                        '.$dob.' (Age: '.$age.' years)<br><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="spec" class="form-label">Address</label>
-                                            
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                        <input type="text" name="address" class="input-text" placeholder="Address" value="'.$address.'" required><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="allergies" class="form-label">Allergies (Optional): </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <textarea name="allergies" class="input-text" rows="2" placeholder="List any allergies (e.g. Penicillin, Peanuts)">'.($row['allergies'] ?? '').'</textarea><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="password" class="form-label">Password: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="password" name="password" class="input-text" placeholder="Defind a Password" required><br>
-                                        </td>
-                                    </tr><tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="cpassword" class="form-label">Conform Password: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="password" name="cpassword" class="input-text" placeholder="Conform Password" required><br>
-                                        </td>
-                                    </tr>
-                                    
-                        
-                                    <tr>
-                                        <td colspan="2">
-                                            <input type="reset" value="Reset" class="login-btn btn-primary-soft btn" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        
-                                            <input type="submit" value="Save" class="login-btn btn-primary btn">
-                                        </td>
-                        
-                                    </tr>
-                                
-                                    </form>
-                                    </tr>
-                                </table>
+                if($error_1!='4'){
+                    ?>
+                    <div id="popup1" class="overlay settings-modal-overlay">
+                        <div class="popup settings-modal settings-edit-modal">
+                            <a class="close settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                            <div class="settings-modal-header">
+                                <p>Account Settings</p>
+                                <h2>Edit User Account Details</h2>
+                                <span>User ID: <?php echo $id; ?> (Auto Generated)</span>
+                            </div>
+                            <form action="edit-user.php" method="POST" class="settings-edit-form">
+                                <input type="hidden" value="<?php echo $id; ?>" name="id00">
+                                <input type="hidden" name="oldemail" value="<?php echo settings_h($row["pemail"]); ?>">
+
+                                <?php if($errorMessage !== ''){ ?>
+                                    <div class="settings-alert">
+                                        <i class="bi bi-exclamation-circle"></i>
+                                        <?php echo settings_h($errorMessage); ?>
+                                    </div>
+                                <?php } ?>
+
+                                <div class="settings-form-grid">
+                                    <div class="settings-field">
+                                        <label for="settings-email" class="form-label">Email</label>
+                                        <input id="settings-email" type="email" name="email" class="input-text" placeholder="Email Address" value="<?php echo settings_h($row["pemail"]); ?>" required>
+                                    </div>
+                                    <div class="settings-field">
+                                        <label for="settings-name" class="form-label">Name</label>
+                                        <input id="settings-name" type="text" name="name" class="input-text" placeholder="Patient Name" value="<?php echo settings_h($row["pname"]); ?>" required>
+                                    </div>
+                                    <div class="settings-field">
+                                        <label for="settings-nic" class="form-label">NIC</label>
+                                        <input id="settings-nic" type="text" name="nic" class="input-text" placeholder="NIC Number" value="<?php echo settings_h($row["pnic"]); ?>" required>
+                                    </div>
+                                    <div class="settings-field">
+                                        <label for="settings-phone" class="form-label">Telephone</label>
+                                        <input id="settings-phone" type="tel" name="Tele" class="input-text" placeholder="Telephone Number" value="<?php echo settings_h($row["ptel"]); ?>" required>
+                                    </div>
+                                    <div class="settings-readonly-card">
+                                        <span>Date of Birth</span>
+                                        <strong><?php echo settings_h($row["pdob"]); ?></strong>
+                                        <small><?php echo settings_h($age); ?></small>
+                                    </div>
+                                    <div class="settings-field settings-field-wide">
+                                        <label for="settings-address" class="form-label">Address</label>
+                                        <input id="settings-address" type="text" name="address" class="input-text" placeholder="Address" value="<?php echo settings_h($row["paddress"]); ?>" required>
+                                    </div>
+                                    <div class="settings-field settings-field-wide">
+                                        <label for="settings-allergies" class="form-label">Allergies (Optional)</label>
+                                        <textarea id="settings-allergies" name="allergies" class="input-text" rows="3" placeholder="List any allergies (e.g. Penicillin, Peanuts)"><?php echo settings_h($row['allergies'] ?? ''); ?></textarea>
+                                    </div>
+                                    <div class="settings-field">
+                                        <label for="settings-password" class="form-label">Password</label>
+                                        <input id="settings-password" type="password" name="password" class="input-text" placeholder="Define a password" required>
+                                    </div>
+                                    <div class="settings-field">
+                                        <label for="settings-cpassword" class="form-label">Confirm Password</label>
+                                        <input id="settings-cpassword" type="password" name="cpassword" class="input-text" placeholder="Confirm password" required>
+                                    </div>
                                 </div>
+                                <div class="settings-modal-actions">
+                                    <button type="reset" class="btn btn-primary-soft">Reset</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
                                 </div>
-                            </center>
-                            <br><br>
+                            </form>
+                        </div>
                     </div>
-                    </div>
-                    ';
-        }else{
-            echo '
-                <div id="popup1" class="overlay">
-                        <div class="popup">
-                        <center>
-                        <br><br><br><br>
+                    <?php
+                }else{
+                    ?>
+                    <div id="popup1" class="overlay settings-modal-overlay">
+                        <div class="popup settings-modal settings-confirm-modal">
+                            <a class="close settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                            <div class="settings-confirm-icon">
+                                <i class="bi bi-check2"></i>
+                            </div>
                             <h2>Edit Successfully!</h2>
-                            <a class="close" href="settings.php">&times;</a>
-                            <div class="content">
-                                If You change your email also Please logout and login again with your new email
-                                
+                            <p class="settings-confirm-copy">If you changed your email, please log out and sign in again with your new email.</p>
+                            <div class="settings-modal-actions">
+                                <a href="settings.php" class="btn btn-primary">OK</a>
+                                <a href="../logout.php" class="btn btn-primary-soft">Log out</a>
                             </div>
-                            <div class="d-flex justify-content-center gap-2">
-                            <a href="settings.php" class="btn btn-primary">OK</a>
-                            <a href="../logout.php" class="btn btn-outline-primary">Log out</a>
-                            </div>
-                            <br><br>
-                        </center>
-                </div>
-                </div>
-    ';
-
-
-
-        }; }
-
+                        </div>
+                    </div>
+                    <?php
+                }
+            }
+        }
     }
-        ?>
+    ?>
 
 </body>
 </html>

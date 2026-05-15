@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/doctor-dashboard-theme.css">
         
     <title>Dashboard</title>
     <style>

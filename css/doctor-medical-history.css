@@ -1,0 +1,207 @@
+.doctor-history-modal-overlay {
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+}
+
+.doctor-history-modal {
+    width: min(900px, 100%);
+    max-width: calc(100vw - 56px);
+    max-height: calc(100vh - 56px);
+    margin: 28px auto;
+    padding: 0;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    overflow-y: auto;
+}
+
+.doctor-history-modal-close {
+    top: 18px !important;
+    right: 20px !important;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0f172a !important;
+    font-size: 34px !important;
+    line-height: 1;
+    z-index: 2;
+}
+
+.doctor-history-modal-close:hover {
+    background: #f8fafc;
+    color: #ff8a00 !important;
+}
+
+.doctor-history-modal-header {
+    padding: 34px 42px 22px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.doctor-history-modal-header p {
+    margin: 0 0 8px;
+    color: #0f766e;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.doctor-history-modal-header h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.doctor-history-form {
+    padding: 30px 42px 36px;
+}
+
+.doctor-history-patient-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.doctor-history-patient-card > span {
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 56px;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #0f766e;
+    font-size: 28px;
+}
+
+.doctor-history-patient-card small {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.doctor-history-patient-card strong {
+    display: block;
+    margin-top: 3px;
+    color: #0f172a;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.doctor-history-patient-card em {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-style: normal;
+    overflow-wrap: anywhere;
+}
+
+.doctor-history-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.doctor-history-field {
+    min-width: 0;
+}
+
+.doctor-history-field-wide {
+    grid-column: 1 / -1;
+}
+
+.doctor-history-field label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.doctor-history-field label span {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.doctor-history-field .form-control,
+.doctor-history-field .form-select {
+    min-height: 56px;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    color: #0f172a;
+    font-size: 16px;
+    box-shadow: none;
+}
+
+.doctor-history-field textarea.form-control {
+    resize: vertical;
+}
+
+.doctor-history-field .form-control:focus,
+.doctor-history-field .form-select:focus {
+    border-color: #ff9f1c;
+    box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.14);
+}
+
+.doctor-history-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid #eef2f6;
+}
+
+.doctor-history-form-actions .btn,
+.doctor-history-form-actions input[type="submit"] {
+    min-width: 132px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+@media (max-width: 760px) {
+    .doctor-history-modal-overlay {
+        padding: 18px;
+    }
+
+    .doctor-history-modal {
+        max-width: calc(100vw - 36px);
+        margin: 24px auto;
+    }
+
+    .doctor-history-modal-header,
+    .doctor-history-form {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .doctor-history-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .doctor-history-form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+}

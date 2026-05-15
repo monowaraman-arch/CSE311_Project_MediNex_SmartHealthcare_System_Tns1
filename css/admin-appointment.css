@@ -1,0 +1,138 @@
+.admin-appointment-modal-overlay {
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+}
+
+.admin-appointment-modal {
+    width: min(720px, 100%);
+    max-width: calc(100vw - 56px);
+    margin: 42px auto;
+    padding: 0;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    overflow: hidden;
+}
+
+.admin-appointment-modal-close {
+    top: 18px !important;
+    right: 20px !important;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0f172a !important;
+    font-size: 34px !important;
+    line-height: 1;
+    z-index: 2;
+}
+
+.admin-appointment-modal-close:hover {
+    background: #f8fafc;
+    color: #ff8a00 !important;
+}
+
+.admin-appointment-confirm-modal {
+    padding: 44px 42px 36px;
+    text-align: center;
+}
+
+.admin-appointment-confirm-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #fed7aa;
+    border-radius: 999px;
+    background: #fff7ed;
+    color: #f97316;
+    font-size: 30px;
+}
+
+.admin-appointment-confirm-modal h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.admin-appointment-confirm-modal p {
+    max-width: 430px;
+    margin: 13px auto 18px;
+    color: #334155;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.admin-appointment-detail-card {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 auto 10px;
+}
+
+.admin-appointment-detail-card div {
+    min-width: 0;
+    padding: 16px 14px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.admin-appointment-detail-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.admin-appointment-detail-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.admin-appointment-confirm-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 18px;
+}
+
+.admin-appointment-confirm-actions .btn {
+    min-width: 118px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+@media (max-width: 720px) {
+    .admin-appointment-modal-overlay {
+        padding: 18px;
+    }
+
+    .admin-appointment-modal {
+        max-width: calc(100vw - 36px);
+        margin: 28px auto;
+    }
+
+    .admin-appointment-confirm-modal {
+        padding: 38px 24px 30px;
+    }
+
+    .admin-appointment-detail-card {
+        grid-template-columns: 1fr;
+    }
+}

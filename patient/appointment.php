@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/patient-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/patient-appointments.css">
     <title>Appointments</title>
     <style>
         .popup{animation: transitionIn-Y-bottom 0.5s;}
@@ -317,26 +319,35 @@
         }elseif($action=='drop'){
             $title=$_GET["title"];
             $docname=$_GET["doc"];
+            $safeTitle = htmlspecialchars(substr($title,0,40), ENT_QUOTES, 'UTF-8');
+            $safeDocname = htmlspecialchars(substr($docname,0,40), ENT_QUOTES, 'UTF-8');
+            $safeId = (int) $id;
             
             // drop (cancel appointment) confirmation popup start
             echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2>Are you sure?</h2>
-                        <a class="close" href="appointment.php">&times;</a>
-                        <div class="content">
-                            You want to Cancel this Appointment?<br><br>
-                            Session Name: &nbsp;<b>'.substr($title,0,40).'</b><br>
-                            Doctor name&nbsp; : <b>'.substr($docname,0,40).'</b><br><br>
-                            
+            <div id="popup1" class="overlay appointment-modal-overlay">
+                <div class="popup appointment-modal appointment-confirm-modal">
+                    <a class="close appointment-modal-close" href="appointment.php" aria-label="Close">&times;</a>
+                    <div class="appointment-confirm-icon appointment-danger-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                    <h2>Cancel Appointment?</h2>
+                    <p class="appointment-confirm-copy">Please confirm before removing this booking from your schedule.</p>
+                    <div class="appointment-summary-card">
+                        <div>
+                            <span>Session Name</span>
+                            <strong>'.$safeTitle.'</strong>
                         </div>
-                        <div class="d-flex justify-content-center gap-2">
-                        <a href="delete-appointment.php?id='.$id.'" class="btn btn-primary">Yes</a>
-                        <a href="appointment.php" class="btn btn-secondary">No</a>
+                        <div>
+                            <span>Doctor Name</span>
+                            <strong>'.$safeDocname.'</strong>
                         </div>
-                    </center>
-            </div>
+                    </div>
+                    <div class="appointment-modal-actions">
+                        <a href="appointment.php" class="btn btn-primary-soft">Keep Booking</a>
+                        <a href="delete-appointment.php?id='.$safeId.'" class="btn btn-danger">Cancel Booking</a>
+                    </div>
+                </div>
             </div>
             '; 
             // drop (cancel appointment) confirmation popup end
@@ -491,44 +502,49 @@
                 $error_msg = '';
                 if(isset($_GET['error'])){
                     if($_GET['error'] == 'overlap'){
-                        $error_msg = '<label style="color:rgb(255, 62, 62);">This time slot is already booked!</label><br>';
+                        $error_msg = '<div class="appointment-alert"><i class="bi bi-exclamation-circle"></i>This time slot is already booked.</div>';
                     } elseif($_GET['error'] == 'full'){
-                        $error_msg = '<label style="color:rgb(255, 62, 62);">This session is full!</label><br>';
+                        $error_msg = '<div class="appointment-alert"><i class="bi bi-exclamation-circle"></i>This session is full.</div>';
                     }
                 }
+
+                $safeAppoid = (int) $appoid;
+                $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+                $safeDocname = htmlspecialchars($docname, ENT_QUOTES, 'UTF-8');
+                $safeCurrentDate = htmlspecialchars($current_date, ENT_QUOTES, 'UTF-8');
+                $safeCurrentTime = htmlspecialchars(substr($current_time,0,5), ENT_QUOTES, 'UTF-8');
                 
                 // reschedule form popup start
                 echo '
-                <div id="popup1" class="overlay">
-                        <div class="popup">
-                        <center>
+                <div id="popup1" class="overlay appointment-modal-overlay">
+                    <div class="popup appointment-modal appointment-reschedule-modal">
+                        <a class="close appointment-modal-close" href="appointment.php" aria-label="Close">&times;</a>
+                        <div class="appointment-modal-header">
+                            <p>Manage Booking</p>
                             <h2>Reschedule Appointment</h2>
-                            <a class="close" href="appointment.php">&times;</a>
-                            <div class="content">
-                                <form action="reschedule-appointment.php" method="POST">
-                                <input type="hidden" name="appoid" value="'.$appoid.'">
-                                '.$error_msg.'
-                                <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label class="form-label">Current Appointment: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <b>'.$title.'</b> with <b>'.$docname.'</b><br>
-                                            Date: '.$current_date.' at '.substr($current_time,0,5).'<br><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="new_scheduleid" class="form-label">Select New Schedule: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <select name="new_scheduleid" class="input-text" required>
-                                                <option value="">Choose a new schedule</option>';
+                        </div>
+                        <form action="reschedule-appointment.php" method="POST" class="appointment-reschedule-form">
+                            <input type="hidden" name="appoid" value="'.$safeAppoid.'">
+                            '.$error_msg.'
+                            <div class="appointment-summary-card appointment-current-card">
+                                <div>
+                                    <span>Current Session</span>
+                                    <strong>'.$safeTitle.'</strong>
+                                </div>
+                                <div>
+                                    <span>Doctor</span>
+                                    <strong>'.$safeDocname.'</strong>
+                                </div>
+                                <div>
+                                    <span>Date and Time</span>
+                                    <strong>'.$safeCurrentDate.' at '.$safeCurrentTime.'</strong>
+                                </div>
+                            </div>
+                            <div class="appointment-form-grid">
+                                <div class="appointment-field appointment-field-wide">
+                                    <label for="new_scheduleid" class="form-label">Select New Schedule</label>
+                                    <select id="new_scheduleid" name="new_scheduleid" class="input-text" required>
+                                        <option value="">Choose a new schedule</option>';
                                                 
                                                 while($sched = $schedules_result->fetch_assoc()){
                                                     if($sched['scheduleid'] != $current_scheduleid){
@@ -536,36 +552,24 @@
                                                         $max = getScheduleMaxPatients($database, $sched['scheduleid']);
                                                         $available = $max - $booked;
                                                         if($available > 0){
-                                                            echo '<option value="'.$sched['scheduleid'].'">'.$sched['scheduledate'].' @ '.substr($sched['scheduletime'],0,5).' ('.$sched['title'].' - '.$available.' slots available)</option>';
+                                                            echo '<option value="'.(int)$sched['scheduleid'].'">'.htmlspecialchars($sched['scheduledate'].' @ '.substr($sched['scheduletime'],0,5).' ('.$sched['title'].' - '.$available.' slots available)', ENT_QUOTES, 'UTF-8').'</option>';
                                                         }
                                                     }
                                                 }
                                                 
-                                        echo '</select><br><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <label for="new_date" class="form-label">New Appointment Date: </label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-td" colspan="2">
-                                            <input type="date" name="new_date" class="input-text" min="'.date('Y-m-d').'" required><br><br>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <input type="submit" name="reschedule" value="Reschedule" class="login-btn btn-primary btn">
-                                            <a href="appointment.php"><input type="button" value="Cancel" class="login-btn btn-primary-soft btn"></a>
-                                        </td>
-                                    </tr>
-                                </table>
-                                </form>
+                                        echo '</select>
+                                </div>
+                                <div class="appointment-field appointment-field-wide">
+                                    <label for="new_date" class="form-label">New Appointment Date</label>
+                                    <input id="new_date" type="date" name="new_date" class="input-text" min="'.date('Y-m-d').'" required>
+                                </div>
                             </div>
-                        </center>
-                        <br><br>
-                </div>
+                            <div class="appointment-modal-actions">
+                                <a href="appointment.php" class="btn btn-primary-soft">Cancel</a>
+                                <button type="submit" name="reschedule" class="btn btn-primary">Reschedule</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 ';
                 // reschedule form popup end

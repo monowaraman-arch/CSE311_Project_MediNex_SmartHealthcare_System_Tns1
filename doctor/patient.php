@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/doctor-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/doctor-patient.css">
         
     <title>Patients</title>
     <style>
@@ -261,69 +263,93 @@
         </div>
     </div>
     <?php 
+    function doctor_patient_h($value) {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
+
     if($_GET){
         
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id=isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+        $action=$_GET["action"] ?? "";
+        if($action=='view'){
             $sqlmain= "select * from patient where pid='$id'";
             $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $nic=$row["pnic"];
-            $dob=$row["pdob"];
-            $tele=$row["ptel"];
-            $address=$row["paddress"];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup" style="max-height: 90vh; overflow-y: auto;">
-                    <center>
-                        <a class="close" href="patient.php">&times;</a>
-                        <div class="content" style="padding: 20px;">
+            $row=$result ? $result->fetch_assoc() : null;
 
+            if($row){
+                $name=$row["pname"];
+                $email=$row["pemail"];
+                $nic=$row["pnic"];
+                $dob=$row["pdob"];
+                $tele=$row["ptel"];
+                $address=$row["paddress"];
+            ?>
+            <div id="popup1" class="overlay doctor-patient-modal-overlay">
+                <div class="popup doctor-patient-modal doctor-patient-details-modal">
+                    <a class="close doctor-patient-modal-close" href="patient.php" aria-label="Close">&times;</a>
+                    <div class="doctor-patient-modal-header">
+                        <p>My Patients</p>
+                        <h2>View Details</h2>
+                    </div>
+                    <div class="doctor-patient-profile-card">
+                        <span><i class="bi bi-person-heart"></i></span>
+                        <div>
+                            <h3><?php echo doctor_patient_h($name); ?></h3>
+                            <p><?php echo doctor_patient_h($email); ?></p>
                         </div>
-                        <!-- START HERE: Bootstrap Card Section - View Patient Details with Scrollbar -->
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">View Details</h5>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Patient ID:</label>
-                                    <p class="mb-0">P-'.$id.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Name:</label>
-                                    <p class="mb-0">'.$name.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Email:</label>
-                                    <p class="mb-0">'.$email.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">NIC:</label>
-                                    <p class="mb-0">'.$nic.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Telephone:</label>
-                                    <p class="mb-0">'.$tele.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Address:</label>
-                                    <p class="mb-0">'.$address.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Date of Birth:</label>
-                                    <p class="mb-0">'.$dob.'</p>
-                                </div>
-                                <a href="patient.php" class="btn btn-primary">OK</a>
-                            </div>
+                    </div>
+                    <div class="doctor-patient-detail-grid">
+                        <div>
+                            <span>Patient ID</span>
+                            <strong>P-<?php echo doctor_patient_h($id); ?></strong>
                         </div>
-                        <!-- END HERE: Bootstrap Card Section - View Patient Details with Scrollbar -->
-                    </center>
-                    <br><br>
+                        <div>
+                            <span>Name</span>
+                            <strong><?php echo doctor_patient_h($name); ?></strong>
+                        </div>
+                        <div>
+                            <span>Email</span>
+                            <strong><?php echo doctor_patient_h($email); ?></strong>
+                        </div>
+                        <div>
+                            <span>NIC</span>
+                            <strong><?php echo doctor_patient_h($nic); ?></strong>
+                        </div>
+                        <div>
+                            <span>Telephone</span>
+                            <strong><?php echo doctor_patient_h($tele); ?></strong>
+                        </div>
+                        <div>
+                            <span>Date of Birth</span>
+                            <strong><?php echo doctor_patient_h($dob); ?></strong>
+                        </div>
+                        <div class="doctor-patient-detail-wide">
+                            <span>Address</span>
+                            <strong><?php echo doctor_patient_h($address); ?></strong>
+                        </div>
+                    </div>
+                    <div class="doctor-patient-modal-actions">
+                        <a href="medical-history.php?patient_id=<?php echo doctor_patient_h($id); ?>" class="btn btn-primary-soft">History</a>
+                        <a href="patient.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
+            <?php
+            }else{
+            ?>
+            <div id="popup1" class="overlay doctor-patient-modal-overlay">
+                <div class="popup doctor-patient-modal doctor-patient-confirm-modal">
+                    <a class="close doctor-patient-modal-close" href="patient.php" aria-label="Close">&times;</a>
+                    <h2>Patient Not Found</h2>
+                    <p>The selected patient record is not available.</p>
+                    <div class="doctor-patient-confirm-actions">
+                        <a href="patient.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
-            ';
-        
+            <?php
+            }
+        }
     };
 
 ?>

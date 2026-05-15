@@ -124,6 +124,8 @@ $today = date('Y-m-d');
     <link rel="stylesheet" href="../css/animations.css">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/doctor-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/doctor-medical-history.css">
     <title>Patient Medical History</title>
     <style>
         .popup {
@@ -292,76 +294,51 @@ $today = date('Y-m-d');
     </div>
 
     <?php if ($action === 'add-history'): ?>
-        <div id="popup1" class="overlay">
-            <div class="popup">
-                <center>
+        <div id="popup1" class="overlay doctor-history-modal-overlay">
+            <div class="popup doctor-history-modal doctor-history-form-modal">
+                <a class="close doctor-history-modal-close" href="medical-history.php?patient_id=<?= e($patientId) ?>" aria-label="Close">&times;</a>
+                <div class="doctor-history-modal-header">
+                    <p>Medical History</p>
                     <h2>Add Medical History</h2>
-                    <a class="close" href="medical-history.php?patient_id=<?= e($patientId) ?>">&times;</a>
-                    <div class="content">
-                        <form action="" method="POST">
-                            <input type="hidden" name="patient_id" value="<?= e($patientId) ?>">
-                            <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                                <tr>
-                                    <td>
-                                        <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">Add Medical History.</p><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="condition_name" class="form-label">Condition Name: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <input type="text" name="condition_name" class="input-text" placeholder="e.g. Diabetes, Hypertension" required><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="diagnosis_date" class="form-label">Diagnosis Date: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <input type="date" name="diagnosis_date" class="input-text" max="<?= e($today) ?>" required><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="status" class="form-label">Status: </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <select name="status" class="input-text" required>
-                                            <option value="Active">Active</option>
-                                            <option value="Resolved">Resolved</option>
-                                            <option value="Chronic">Chronic</option>
-                                            <option value="Under Treatment">Under Treatment</option>
-                                        </select><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <label for="notes" class="form-label">Notes (Optional): </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label-td" colspan="2">
-                                        <textarea name="notes" class="input-text" rows="3" placeholder="Additional notes about this condition"></textarea><br><br>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <input type="submit" name="add_history" value="Add History" class="login-btn btn-primary btn">
-                                        <a href="medical-history.php?patient_id=<?= e($patientId) ?>"><input type="button" value="Cancel" class="login-btn btn-primary-soft btn"></a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
+                </div>
+                <form action="" method="POST" class="doctor-history-form">
+                    <input type="hidden" name="patient_id" value="<?= e($patientId) ?>">
+                    <div class="doctor-history-patient-card">
+                        <span><i class="bi bi-person-heart"></i></span>
+                        <div>
+                            <small>Patient</small>
+                            <strong><?= e($patient["pname"]) ?></strong>
+                            <em><?= e($patient["pemail"]) ?></em>
+                        </div>
                     </div>
-                </center>
-                <br><br>
+                    <div class="doctor-history-form-grid">
+                        <div class="doctor-history-field">
+                            <label for="condition-name">Condition Name</label>
+                            <input id="condition-name" type="text" name="condition_name" class="form-control" placeholder="e.g. Diabetes, Hypertension" required>
+                        </div>
+                        <div class="doctor-history-field">
+                            <label for="diagnosis-date">Diagnosis Date</label>
+                            <input id="diagnosis-date" type="date" name="diagnosis_date" class="form-control" max="<?= e($today) ?>" required>
+                        </div>
+                        <div class="doctor-history-field">
+                            <label for="history-status">Status</label>
+                            <select id="history-status" name="status" class="form-select" required>
+                                <option value="Active">Active</option>
+                                <option value="Resolved">Resolved</option>
+                                <option value="Chronic">Chronic</option>
+                                <option value="Under Treatment">Under Treatment</option>
+                            </select>
+                        </div>
+                        <div class="doctor-history-field doctor-history-field-wide">
+                            <label for="history-notes">Notes <span>Optional</span></label>
+                            <textarea id="history-notes" name="notes" class="form-control" rows="4" placeholder="Additional notes about this condition"></textarea>
+                        </div>
+                    </div>
+                    <div class="doctor-history-form-actions">
+                        <a href="medical-history.php?patient_id=<?= e($patientId) ?>" class="btn btn-secondary">Cancel</a>
+                        <input type="submit" name="add_history" value="Add History" class="btn btn-primary">
+                    </div>
+                </form>
             </div>
         </div>
     <?php elseif ($action === 'edit' && $selectedHistory): ?>

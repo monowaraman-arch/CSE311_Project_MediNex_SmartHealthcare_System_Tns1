@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/admin-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/admin-patient.css">
     <title>Patients</title>
     <style>
         .popup{animation: transitionIn-Y-bottom 0.5s;}
@@ -197,131 +199,92 @@
         </div>
     </div>
     <?php 
+    function admin_patient_h($value) {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
+
     if($_GET){
         
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id=isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+        $action=$_GET["action"] ?? "";
+        if($action=='view'){
             $sqlmain= "select * from patient where pid='$id'";
             $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["pname"];
-            $email=$row["pemail"];
-            $nic=$row["pnic"];
-            $dob=$row["pdob"];
-            $tele=$row["ptel"];
-            $address=$row["paddress"];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <a class="close" href="patient.php">&times;</a>
-                        <div class="content">
+            $row=$result ? $result->fetch_assoc() : null;
 
+            if($row){
+                $name=$row["pname"];
+                $email=$row["pemail"];
+                $nic=$row["pnic"];
+                $dob=$row["pdob"];
+                $tele=$row["ptel"];
+                $address=$row["paddress"];
+            ?>
+            <div id="popup1" class="overlay admin-patient-modal-overlay">
+                <div class="popup admin-patient-modal admin-patient-details-modal">
+                    <a class="close admin-patient-modal-close" href="patient.php" aria-label="Close">&times;</a>
+                    <div class="admin-patient-modal-header">
+                        <p>Patient Directory</p>
+                        <h2>View Details</h2>
+                    </div>
+                    <div class="admin-patient-profile-card">
+                        <span><i class="bi bi-person"></i></span>
+                        <div>
+                            <h3><?php echo admin_patient_h($name); ?></h3>
+                            <p><?php echo admin_patient_h($email); ?></p>
                         </div>
-                        <div style="display: flex;justify-content: center;">
-                        <table width="80%" class="sub-table scrolldown add-doc-form-container" border="0">
-                        
-                            <tr>
-                                <td>
-                                    <p style="padding: 0;margin: 0;text-align: left;font-size: 25px;font-weight: 500;">View Details.</p><br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Patient ID: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    P-'.$id.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Name: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    '.$name.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Email" class="form-label">Email: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$email.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="nic" class="form-label">NIC: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$nic.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="Tele" class="form-label">Telephone: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                '.$tele.'<br><br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    <label for="spec" class="form-label">Address: </label>
-                                    
-                                </td>
-                            </tr>
-                            <tr>
-                            <td class="label-td" colspan="2">
-                            '.$address.'<br><br>
-                            </td>
-                            </tr>
-                            <tr>
-                                
-                                <td class="label-td" colspan="2">
-                                    <label for="name" class="form-label">Date of Birth: </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="label-td" colspan="2">
-                                    '.$dob.'<br><br>
-                                </td>
-                                
-                            </tr>
-                            <tr>
-                                <td colspan="2">
-                                    <a href="patient.php"><input type="button" value="OK" class="login-btn btn-primary-soft btn" ></a>
-                                
-                                    
-                                </td>
-                
-                            </tr>
-                           
-
-                        </table>
+                    </div>
+                    <div class="admin-patient-detail-grid">
+                        <div>
+                            <span>Patient ID</span>
+                            <strong>P-<?php echo admin_patient_h($id); ?></strong>
                         </div>
-                    </center>
-                    <br><br>
+                        <div>
+                            <span>Name</span>
+                            <strong><?php echo admin_patient_h($name); ?></strong>
+                        </div>
+                        <div>
+                            <span>Email</span>
+                            <strong><?php echo admin_patient_h($email); ?></strong>
+                        </div>
+                        <div>
+                            <span>NIC</span>
+                            <strong><?php echo admin_patient_h($nic); ?></strong>
+                        </div>
+                        <div>
+                            <span>Telephone</span>
+                            <strong><?php echo admin_patient_h($tele); ?></strong>
+                        </div>
+                        <div>
+                            <span>Date of Birth</span>
+                            <strong><?php echo admin_patient_h($dob); ?></strong>
+                        </div>
+                        <div class="admin-patient-detail-wide">
+                            <span>Address</span>
+                            <strong><?php echo admin_patient_h($address); ?></strong>
+                        </div>
+                    </div>
+                    <div class="admin-patient-modal-actions">
+                        <a href="patient.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
+            <?php
+            }else{
+            ?>
+            <div id="popup1" class="overlay admin-patient-modal-overlay">
+                <div class="popup admin-patient-modal admin-patient-confirm-modal">
+                    <a class="close admin-patient-modal-close" href="patient.php" aria-label="Close">&times;</a>
+                    <h2>Patient Not Found</h2>
+                    <p>The selected patient record is not available.</p>
+                    <div class="admin-patient-confirm-actions">
+                        <a href="patient.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
-            ';
-        
+            <?php
+            }
+        }
     };
 
 ?>

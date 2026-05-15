@@ -1,0 +1,202 @@
+.doctor-patient-modal-overlay {
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+}
+
+.doctor-patient-modal {
+    width: min(880px, 100%);
+    max-width: calc(100vw - 56px);
+    max-height: calc(100vh - 56px);
+    margin: 28px auto;
+    padding: 0;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    overflow-y: auto;
+}
+
+.doctor-patient-modal-close {
+    top: 18px !important;
+    right: 20px !important;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0f172a !important;
+    font-size: 34px !important;
+    line-height: 1;
+    z-index: 2;
+}
+
+.doctor-patient-modal-close:hover {
+    background: #f8fafc;
+    color: #ff8a00 !important;
+}
+
+.doctor-patient-modal-header {
+    padding: 34px 42px 22px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.doctor-patient-modal-header p {
+    margin: 0 0 8px;
+    color: #0f766e;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.doctor-patient-modal-header h2,
+.doctor-patient-confirm-modal h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.doctor-patient-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 26px 42px;
+    padding: 18px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #f8fafc;
+}
+
+.doctor-patient-profile-card span {
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 56px;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #0f766e;
+    font-size: 28px;
+}
+
+.doctor-patient-profile-card h3 {
+    margin: 0 0 4px;
+    color: #0f172a;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.doctor-patient-profile-card p {
+    margin: 0;
+    color: #64748b;
+    overflow-wrap: anywhere;
+}
+
+.doctor-patient-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 0 42px 28px;
+}
+
+.doctor-patient-detail-grid div {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.doctor-patient-detail-grid span {
+    display: block;
+    margin-bottom: 7px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.doctor-patient-detail-grid strong {
+    display: block;
+    color: #0f172a;
+    font-size: 17px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.doctor-patient-detail-wide {
+    grid-column: 1 / -1;
+}
+
+.doctor-patient-modal-actions,
+.doctor-patient-confirm-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.doctor-patient-modal-actions {
+    padding: 18px 42px 34px;
+    border-top: 1px solid #eef2f6;
+}
+
+.doctor-patient-modal-actions .btn,
+.doctor-patient-confirm-actions .btn {
+    min-width: 118px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.doctor-patient-confirm-modal {
+    width: min(660px, 100%);
+    padding: 44px 42px 36px;
+    text-align: center;
+}
+
+.doctor-patient-confirm-modal p {
+    max-width: 430px;
+    margin: 13px auto 16px;
+    color: #334155;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.doctor-patient-confirm-actions {
+    justify-content: center;
+    padding-top: 16px;
+}
+
+@media (max-width: 760px) {
+    .doctor-patient-modal-overlay {
+        padding: 18px;
+    }
+
+    .doctor-patient-modal {
+        max-width: calc(100vw - 36px);
+        margin: 24px auto;
+    }
+
+    .doctor-patient-modal-header,
+    .doctor-patient-detail-grid,
+    .doctor-patient-modal-actions {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .doctor-patient-profile-card {
+        margin-left: 24px;
+        margin-right: 24px;
+    }
+
+    .doctor-patient-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}

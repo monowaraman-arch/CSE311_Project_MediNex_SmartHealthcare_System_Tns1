@@ -1,0 +1,21 @@
+body {
+    background-color: #f7fafc;
+}
+
+.container.app-shell {
+    background-color: #f7fafc;
+}
+
+.menu,
+.menu-container {
+    background-color: #fff8f1;
+}
+
+.dash-body,
+.dash-body::before {
+    background: #f7fafc !important;
+}
+
+.dash-body .container-fluid {
+    background: transparent !important;
+}

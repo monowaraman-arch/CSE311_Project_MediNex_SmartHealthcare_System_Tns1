@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/doctor-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/doctor-appointments.css">
         
     <title>Appointments</title>
     <style>
@@ -241,10 +243,13 @@
         </div>
     </div>
     <?php
+    function doctor_appointment_h($value) {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
     
     if($_GET){
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id=isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+        $action=$_GET["action"] ?? "";
         if($action=='add-session'){
 
             echo '
@@ -508,197 +513,198 @@
             </div>
             ';  
         }elseif($action=='create-prescription'){
-            $appointment_id = $_GET['appointment_id'] ?? null;
-            $patient_id = $_GET['patient_id'] ?? null;
+            $appointment_id = isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : 0;
+            $patient_id = isset($_GET['patient_id']) ? (int)$_GET['patient_id'] : 0;
             
-            // Get patient info
             $patient_sql = "select * from patient where pid=$patient_id";
             $patient_result = $database->query($patient_sql);
-            $patient_data = $patient_result->fetch_assoc();
-            $patient_name = $patient_data['pname'];
+            $patient_data = $patient_result ? $patient_result->fetch_assoc() : null;
+            $patient_name = $patient_data['pname'] ?? 'Selected Patient';
             
-            // Get medicines list
             $medicines_list = $database->query("select * from medicines order by medicine_name");
+            $medicines_array = array();
+            while($med = $medicines_list->fetch_assoc()){
+                $medicines_array[] = array(
+                    'id' => $med['medicine_id'],
+                    'name' => $med['medicine_name'],
+                    'strength' => $med['strength']
+                );
+            }
             
             date_default_timezone_set('Asia/Dhaka');
             $today = date('Y-m-d');
-            
-            echo '
-            <!-- START HERE: Bootstrap Popup Section - Create Prescription -->
-            <div id="popup1" class="overlay">
-                    <div class="popup" style="max-height: 90vh; overflow-y: auto;">
-                    <center>
+            ?>
+            <div id="popup1" class="overlay doctor-appointment-modal-overlay">
+                <div class="popup doctor-appointment-modal doctor-prescription-modal">
+                    <a class="close doctor-appointment-modal-close" href="appointment.php" aria-label="Close">&times;</a>
+                    <div class="doctor-appointment-modal-header">
+                        <p>My Appointments</p>
                         <h2>Create Prescription</h2>
-                        <a class="close" href="appointment.php">&times;</a>
-                        <div class="content" style="padding-bottom: 20px;">
-                            <form action="create-prescription.php" method="POST" id="prescription-form">
-                            <input type="hidden" name="appointment_id" value="'.$appointment_id.'">
-                            <input type="hidden" name="patient_id" value="'.$patient_id.'">
-                            
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Patient:</label>
-                                        <p class="mb-0"><strong>'.$patient_name.'</strong></p>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="prescription_date" class="form-label">Prescription Date</label>
-                                        <input type="date" name="prescription_date" class="form-control" value="'.$today.'" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="diagnosis" class="form-label">Diagnosis</label>
-                                        <textarea name="diagnosis" class="form-control" rows="3" placeholder="Enter diagnosis" required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Medicines</label>
-                                        <div id="medicines-container">
-                                            <table class="table table-bordered table-sm mb-2">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>Medicine</th>
-                                                        <th>Dosage</th>
-                                                        <th>Frequency</th>
-                                                        <th>Duration</th>
-                                                        <th>Instructions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <select name="medicines[0][medicine_id]" class="form-select form-select-sm" required>
-                                                                <option value="">Select Medicine</option>';
-                                                            
-                                                            while($med = $medicines_list->fetch_assoc()){
-                                                                echo '<option value="'.$med['medicine_id'].'">'.$med['medicine_name'].' ('.$med['strength'].')</option>';
-                                                            }
-                                                            
-                                                    echo '</select>
-                                                        </td>
-                                                        <td><input type="text" name="medicines[0][dosage]" class="form-control form-control-sm" placeholder="e.g. 1 tablet" required></td>
-                                                        <td><input type="text" name="medicines[0][frequency]" class="form-control form-control-sm" placeholder="e.g. Twice daily" required></td>
-                                                        <td><input type="text" name="medicines[0][duration]" class="form-control form-control-sm" placeholder="e.g. 7 days" required></td>
-                                                        <td><input type="text" name="medicines[0][instructions]" class="form-control form-control-sm" placeholder="Special instructions"></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <button type="button" onclick="addMedicineRow()" class="btn btn-outline-primary btn-sm">Add Another Medicine</button>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="follow_up_date" class="form-label">Follow-up Date (Optional)</label>
-                                        <input type="date" name="follow_up_date" class="form-control">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="follow_up_instructions" class="form-label">Follow-up Instructions (Optional)</label>
-                                        <textarea name="follow_up_instructions" class="form-control" rows="2" placeholder="Follow-up instructions"></textarea>
-                                    </div>
-                                    <div class="d-flex gap-2 justify-content-center">
-                                        <input type="submit" value="Create Prescription" class="btn btn-primary">
-                                        <a href="appointment.php" class="btn btn-secondary">Cancel</a>
-                                    </div>
-                                </div>
+                    </div>
+                    <form action="create-prescription.php" method="POST" id="prescription-form" class="doctor-appointment-form">
+                        <input type="hidden" name="appointment_id" value="<?php echo $appointment_id; ?>">
+                        <input type="hidden" name="patient_id" value="<?php echo $patient_id; ?>">
+                        <div class="doctor-appointment-patient-card">
+                            <span><i class="bi bi-person-heart"></i></span>
+                            <div>
+                                <small>Patient</small>
+                                <strong><?php echo doctor_appointment_h($patient_name); ?></strong>
                             </div>
-                            </form>
-                            
-                            <script>
-                            let medicineCount = 1;
-                            const medicinesData = ';
-                            
-                            // Generate medicines as JSON
-                            $medicines_list2 = $database->query("select * from medicines order by medicine_name");
-                            $medicines_array = array();
-                            while($med2 = $medicines_list2->fetch_assoc()){
-                                $medicines_array[] = array(
-                                    'id' => $med2['medicine_id'],
-                                    'name' => $med2['medicine_name'],
-                                    'strength' => $med2['strength']
-                                );
-                            }
-                            echo json_encode($medicines_array);
-                            
-                            echo ';
-                            
-                            function addMedicineRow() {
-                                const container = document.getElementById("medicines-container");
-                                const table = container.querySelector("table");
-                                const newRow = table.insertRow(-1);
-                                
-                                let optionsHtml = "<option value=\\"\\">Select Medicine</option>";
-                                medicinesData.forEach(function(med) {
-                                    optionsHtml += "<option value=\\"" + med.id + "\\">" + med.name + " (" + med.strength + ")</option>";
-                                });
-                                
-                                newRow.innerHTML = "<td><select name=\\"medicines[" + medicineCount + "][medicine_id]\\" class=\\"form-select form-select-sm\\" required>" + optionsHtml + "</select></td><td><input type=\\"text\\" name=\\"medicines[" + medicineCount + "][dosage]\\" class=\\"form-control form-control-sm\\" placeholder=\\"e.g. 1 tablet\\" required></td><td><input type=\\"text\\" name=\\"medicines[" + medicineCount + "][frequency]\\" class=\\"form-control form-control-sm\\" placeholder=\\"e.g. Twice daily\\" required></td><td><input type=\\"text\\" name=\\"medicines[" + medicineCount + "][duration]\\" class=\\"form-control form-control-sm\\" placeholder=\\"e.g. 7 days\\" required></td><td><input type=\\"text\\" name=\\"medicines[" + medicineCount + "][instructions]\\" class=\\"form-control form-control-sm\\" placeholder=\\"Special instructions\\"></td>";
-                                medicineCount++;
-                            }
-                            </script>
                         </div>
-                    </center>
+                        <div class="doctor-appointment-form-grid">
+                            <div class="doctor-appointment-field">
+                                <label for="prescription-date">Prescription Date</label>
+                                <input id="prescription-date" type="date" name="prescription_date" class="form-control" value="<?php echo doctor_appointment_h($today); ?>" required>
+                            </div>
+                            <div class="doctor-appointment-field doctor-appointment-field-wide">
+                                <label for="prescription-diagnosis">Diagnosis</label>
+                                <textarea id="prescription-diagnosis" name="diagnosis" class="form-control" rows="4" placeholder="Enter diagnosis" required></textarea>
+                            </div>
+                        </div>
+                        <div class="doctor-appointment-section-title">
+                            <h3>Medicines</h3>
+                            <button type="button" onclick="addMedicineRow()" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-circle"></i> Add Medicine</button>
+                        </div>
+                        <div id="medicines-container" class="doctor-medicines-table-wrap">
+                            <table class="table doctor-medicines-table">
+                                <thead>
+                                    <tr>
+                                        <th>Medicine</th>
+                                        <th>Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Duration</th>
+                                        <th>Instructions</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="medicines[0][medicine_id]" class="form-select form-select-sm" required>
+                                                <option value="">Select Medicine</option>
+                                                <?php foreach($medicines_array as $med){ ?>
+                                                    <option value="<?php echo doctor_appointment_h($med['id']); ?>"><?php echo doctor_appointment_h($med['name'].' ('.$med['strength'].')'); ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" name="medicines[0][dosage]" class="form-control form-control-sm" placeholder="1 tablet" required></td>
+                                        <td><input type="text" name="medicines[0][frequency]" class="form-control form-control-sm" placeholder="Twice daily" required></td>
+                                        <td><input type="text" name="medicines[0][duration]" class="form-control form-control-sm" placeholder="7 days" required></td>
+                                        <td><input type="text" name="medicines[0][instructions]" class="form-control form-control-sm" placeholder="After meal"></td>
+                                        <td><button type="button" class="btn btn-light btn-sm doctor-row-remove" onclick="removeMedicineRow(this)" aria-label="Remove medicine" disabled><i class="bi bi-x"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="doctor-appointment-form-grid doctor-appointment-followup-grid">
+                            <div class="doctor-appointment-field">
+                                <label for="follow-up-date">Follow-up Date <span>Optional</span></label>
+                                <input id="follow-up-date" type="date" name="follow_up_date" class="form-control">
+                            </div>
+                            <div class="doctor-appointment-field">
+                                <label for="follow-up-instructions">Follow-up Instructions <span>Optional</span></label>
+                                <textarea id="follow-up-instructions" name="follow_up_instructions" class="form-control" rows="3" placeholder="Follow-up instructions"></textarea>
+                            </div>
+                        </div>
+                        <div class="doctor-appointment-form-actions">
+                            <a href="appointment.php" class="btn btn-secondary">Cancel</a>
+                            <input type="submit" value="Create Prescription" class="btn btn-primary">
+                        </div>
+                    </form>
+                    <script>
+                    let medicineCount = 1;
+                    const medicinesData = <?php echo json_encode($medicines_array, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
+                    function escapeHtml(value) {
+                        return String(value)
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+                    }
+
+                    function medicineOptionsHtml() {
+                        let optionsHtml = '<option value="">Select Medicine</option>';
+                        medicinesData.forEach(function(med) {
+                            optionsHtml += '<option value="' + escapeHtml(med.id) + '">' + escapeHtml(med.name) + ' (' + escapeHtml(med.strength) + ')</option>';
+                        });
+                        return optionsHtml;
+                    }
+
+                    function addMedicineRow() {
+                        const table = document.querySelector("#medicines-container table tbody");
+                        const newRow = table.insertRow(-1);
+                        newRow.innerHTML = '<td><select name="medicines[' + medicineCount + '][medicine_id]" class="form-select form-select-sm" required>' + medicineOptionsHtml() + '</select></td><td><input type="text" name="medicines[' + medicineCount + '][dosage]" class="form-control form-control-sm" placeholder="1 tablet" required></td><td><input type="text" name="medicines[' + medicineCount + '][frequency]" class="form-control form-control-sm" placeholder="Twice daily" required></td><td><input type="text" name="medicines[' + medicineCount + '][duration]" class="form-control form-control-sm" placeholder="7 days" required></td><td><input type="text" name="medicines[' + medicineCount + '][instructions]" class="form-control form-control-sm" placeholder="After meal"></td><td><button type="button" class="btn btn-light btn-sm doctor-row-remove" onclick="removeMedicineRow(this)" aria-label="Remove medicine"><i class="bi bi-x"></i></button></td>';
+                        medicineCount++;
+                    }
+
+                    function removeMedicineRow(button) {
+                        const tbody = button.closest("tbody");
+                        if (tbody.rows.length > 1) {
+                            button.closest("tr").remove();
+                        }
+                    }
+                    </script>
+                </div>
             </div>
-            </div>
-            <!-- END HERE: Bootstrap Popup Section - Create Prescription -->
-            ';
-        }elseif($action=='create-summary'){
-            $appointment_id = $_GET['appointment_id'];
+        <?php }elseif($action=='create-summary'){
+            $appointment_id = isset($_GET['appointment_id']) ? (int)$_GET['appointment_id'] : 0;
             
-            // Get appointment details
             $app_sql = "select appointment.*, patient.pname, schedule.title from appointment inner join patient on appointment.pid=patient.pid inner join schedule on appointment.scheduleid=schedule.scheduleid where appointment.appoid=$appointment_id and schedule.docid=$userid";
             $app_result = $database->query($app_sql);
-            if($app_result->num_rows==1){
+            if($app_result && $app_result->num_rows==1){
                 $app_data = $app_result->fetch_assoc();
                 $patient_name = $app_data['pname'];
                 $title = $app_data['title'];
-                
-                echo '
-                <!-- START HERE: Bootstrap Popup Section - My Appointment Summary with Scrollbar -->
-                <div id="popup1" class="overlay">
-                        <div class="popup" style="max-height: 90vh; overflow-y: auto;">
-                        <center>
+                ?>
+                <div id="popup1" class="overlay doctor-appointment-modal-overlay">
+                    <div class="popup doctor-appointment-modal doctor-summary-modal">
+                        <a class="close doctor-appointment-modal-close" href="appointment.php" aria-label="Close">&times;</a>
+                        <div class="doctor-appointment-modal-header">
+                            <p>My Appointments</p>
                             <h2>Create Visit Summary</h2>
-                            <a class="close" href="appointment.php">&times;</a>
-                            <div class="content" style="padding: 20px;">
-                                <form action="visit-summary.php" method="POST">
-                                <input type="hidden" name="appointment_id" value="'.$appointment_id.'">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Patient:</label>
-                                            <p class="mb-0"><strong>'.$patient_name.'</strong> - '.$title.'</p>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="chief_complaint" class="form-label">Chief Complaint</label>
-                                            <textarea name="chief_complaint" class="form-control" rows="2" placeholder="Main complaint" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="examination_findings" class="form-label">Examination Findings (Optional)</label>
-                                            <textarea name="examination_findings" class="form-control" rows="3" placeholder="Physical examination findings"></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="diagnosis" class="form-label">Diagnosis</label>
-                                            <textarea name="diagnosis" class="form-control" rows="2" placeholder="Diagnosis" required></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="treatment_plan" class="form-label">Treatment Plan (Optional)</label>
-                                            <textarea name="treatment_plan" class="form-control" rows="2" placeholder="Treatment plan"></textarea>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="notes" class="form-label">Additional Notes (Optional)</label>
-                                            <textarea name="notes" class="form-control" rows="2" placeholder="Additional notes"></textarea>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <input type="submit" name="create_summary" value="Create Summary" class="btn btn-primary">
-                                            <a href="appointment.php" class="btn btn-secondary">Cancel</a>
-                                        </div>
-                                    </div>
+                        </div>
+                        <form action="visit-summary.php" method="POST" class="doctor-appointment-form">
+                            <input type="hidden" name="appointment_id" value="<?php echo $appointment_id; ?>">
+                            <div class="doctor-appointment-patient-card">
+                                <span><i class="bi bi-clipboard2-pulse"></i></span>
+                                <div>
+                                    <small>Patient</small>
+                                    <strong><?php echo doctor_appointment_h($patient_name); ?></strong>
+                                    <em><?php echo doctor_appointment_h($title); ?></em>
                                 </div>
-                                </form>
                             </div>
-                        </center>
-                        <br><br>
+                            <div class="doctor-appointment-form-grid">
+                                <div class="doctor-appointment-field doctor-appointment-field-wide">
+                                    <label for="chief-complaint">Chief Complaint</label>
+                                    <textarea id="chief-complaint" name="chief_complaint" class="form-control" rows="3" placeholder="Main complaint" required></textarea>
+                                </div>
+                                <div class="doctor-appointment-field doctor-appointment-field-wide">
+                                    <label for="examination-findings">Examination Findings <span>Optional</span></label>
+                                    <textarea id="examination-findings" name="examination_findings" class="form-control" rows="4" placeholder="Physical examination findings"></textarea>
+                                </div>
+                                <div class="doctor-appointment-field doctor-appointment-field-wide">
+                                    <label for="summary-diagnosis">Diagnosis</label>
+                                    <textarea id="summary-diagnosis" name="diagnosis" class="form-control" rows="3" placeholder="Diagnosis" required></textarea>
+                                </div>
+                                <div class="doctor-appointment-field">
+                                    <label for="treatment-plan">Treatment Plan <span>Optional</span></label>
+                                    <textarea id="treatment-plan" name="treatment_plan" class="form-control" rows="3" placeholder="Treatment plan"></textarea>
+                                </div>
+                                <div class="doctor-appointment-field">
+                                    <label for="summary-notes">Additional Notes <span>Optional</span></label>
+                                    <textarea id="summary-notes" name="notes" class="form-control" rows="3" placeholder="Additional notes"></textarea>
+                                </div>
+                            </div>
+                            <div class="doctor-appointment-form-actions">
+                                <a href="appointment.php" class="btn btn-secondary">Cancel</a>
+                                <input type="submit" name="create_summary" value="Create Summary" class="btn btn-primary">
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                </div>
-                <!-- END HERE: Bootstrap Popup Section - My Appointment Summary with Scrollbar -->
-                ';
+                <?php
             }
         }elseif($action=='summary-created'){
             echo '

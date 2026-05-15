@@ -1,0 +1,237 @@
+.appointment-modal-overlay {
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+}
+
+.appointment-modal {
+    width: min(760px, 100%);
+    margin: 30px auto;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    overflow: hidden;
+}
+
+.appointment-reschedule-modal {
+    width: min(820px, 100%);
+}
+
+.appointment-modal-close {
+    top: 18px !important;
+    right: 22px !important;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0f172a !important;
+}
+
+.appointment-modal-close:hover {
+    background: #f8fafc;
+}
+
+.appointment-modal-header {
+    padding: 30px 34px 22px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.appointment-modal-header p {
+    margin: 0 0 6px;
+    color: #0f766e;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.appointment-modal-header h2,
+.appointment-confirm-modal h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.appointment-reschedule-form {
+    padding: 24px 34px 30px;
+}
+
+.appointment-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    color: #b42318;
+    background: #fff1f0;
+    border: 1px solid #ffd1cc;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.appointment-summary-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.appointment-summary-card div {
+    min-width: 0;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+}
+
+.appointment-current-card div:last-child {
+    grid-column: 1 / -1;
+}
+
+.appointment-summary-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.appointment-summary-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.appointment-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.appointment-field-wide {
+    grid-column: 1 / -1;
+}
+
+.appointment-field label {
+    color: #0f172a;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.appointment-field .input-text {
+    width: 100%;
+    min-height: 52px;
+    border-color: #dbe7ef !important;
+    border-radius: 8px !important;
+    background: #ffffff;
+    font-size: 16px;
+}
+
+.appointment-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.appointment-modal-actions .btn {
+    min-width: 128px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.appointment-confirm-modal {
+    width: min(660px, 100%);
+    padding: 42px 42px 34px;
+    text-align: center;
+}
+
+.appointment-confirm-icon {
+    width: 66px;
+    height: 66px;
+    margin: 0 auto 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f766e;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    font-size: 30px;
+}
+
+.appointment-danger-icon {
+    color: #b42318;
+    background: #fff1f0;
+    border-color: #ffd1cc;
+}
+
+.appointment-confirm-copy {
+    max-width: 430px;
+    margin: 12px auto 20px;
+    color: #334155;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.appointment-confirm-modal .appointment-summary-card {
+    max-width: 470px;
+    margin: 0 auto 22px;
+    text-align: left;
+}
+
+.appointment-confirm-modal .appointment-modal-actions {
+    justify-content: center;
+    margin-top: 0;
+}
+
+@media (max-width: 760px) {
+    .appointment-modal-overlay {
+        padding: 12px;
+    }
+
+    .appointment-modal {
+        margin: 18px auto;
+    }
+
+    .appointment-modal-header,
+    .appointment-reschedule-form {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .appointment-summary-card,
+    .appointment-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .appointment-current-card div:last-child {
+        grid-column: auto;
+    }
+
+    .appointment-confirm-modal {
+        padding: 34px 22px 28px;
+    }
+
+    .appointment-modal-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .appointment-modal-actions .btn {
+        width: 100%;
+    }
+}

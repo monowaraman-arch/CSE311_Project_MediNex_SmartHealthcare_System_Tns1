@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/patient-dashboard-theme.css">
     <title>Sessions</title>
     <style>
         .popup{animation: transitionIn-Y-bottom 0.5s;}

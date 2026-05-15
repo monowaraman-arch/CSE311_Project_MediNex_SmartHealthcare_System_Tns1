@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/admin-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/admin-appointment.css">
     <title>Appointments</title>
     <style>
         .popup{animation: transitionIn-Y-bottom 0.5s;}
@@ -245,9 +247,13 @@
     </div>
     <?php
     
+    function admin_appointment_h($value) {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+    }
+
     if($_GET){
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id=isset($_GET["id"]) ? (int)$_GET["id"] : 0;
+        $action=$_GET["action"] ?? "";
         if($action=='add-session'){
 
             echo '
@@ -383,29 +389,39 @@
             </div>
             ';
         }elseif($action=='drop'){
-            $nameget=$_GET["name"];
-            $session=$_GET["session"];
-            $apponum=$_GET["apponum"];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup">
-                    <center>
-                        <h2>Are you sure?</h2>
-                        <a class="close" href="appointment.php">&times;</a>
-                        <div class="content">
-                            You want to delete this record<br><br>
-                            Patient Name: &nbsp;<b>'.substr($nameget,0,40).'</b><br>
-                            Appointment number &nbsp; : <b>'.substr($apponum,0,40).'</b><br><br>
-                            
+            $nameget=$_GET["name"] ?? "";
+            $session=$_GET["session"] ?? "";
+            $apponum=$_GET["apponum"] ?? "";
+            ?>
+            <div id="popup1" class="overlay admin-appointment-modal-overlay">
+                <div class="popup admin-appointment-modal admin-appointment-confirm-modal">
+                    <a class="close admin-appointment-modal-close" href="appointment.php" aria-label="Close">&times;</a>
+                    <div class="admin-appointment-confirm-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                    <h2>Cancel Appointment?</h2>
+                    <p>You want to delete this appointment record.</p>
+                    <div class="admin-appointment-detail-card">
+                        <div>
+                            <span>Patient Name</span>
+                            <strong><?php echo admin_appointment_h(substr($nameget,0,40)); ?></strong>
                         </div>
-                        <div class="d-flex justify-content-center gap-2">
-                        <a href="delete-appointment.php?id='.$id.'" class="btn btn-primary">Yes</a>
+                        <div>
+                            <span>Session</span>
+                            <strong><?php echo admin_appointment_h(substr($session,0,40)); ?></strong>
+                        </div>
+                        <div>
+                            <span>Appointment No.</span>
+                            <strong>#<?php echo admin_appointment_h(substr($apponum,0,40)); ?></strong>
+                        </div>
+                    </div>
+                    <div class="admin-appointment-confirm-actions">
+                        <a href="delete-appointment.php?id=<?php echo $id; ?>" class="btn btn-primary">Yes</a>
                         <a href="appointment.php" class="btn btn-secondary">No</a>
-                        </div>
-                    </center>
+                    </div>
+                </div>
             </div>
-            </div>
-            '; 
+            <?php 
         }elseif($action=='view'){
             $sqlmain= "select * from doctor where docid='$id'";
             $result= $database->query($sqlmain);

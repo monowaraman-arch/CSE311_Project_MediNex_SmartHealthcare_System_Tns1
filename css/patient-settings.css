@@ -1,0 +1,340 @@
+.settings-modal-overlay {
+    background: rgba(15, 23, 42, 0.72);
+    padding: 28px;
+}
+
+.settings-modal {
+    width: min(780px, 100%);
+    max-height: calc(100vh - 56px);
+    margin: 28px auto;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid #dbe7ef;
+    border-radius: 8px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    overflow-y: auto;
+}
+
+.settings-edit-modal {
+    width: min(920px, 100%);
+}
+
+.settings-modal-close {
+    top: 18px !important;
+    right: 22px !important;
+    width: 42px;
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0f172a !important;
+    z-index: 2;
+}
+
+.settings-modal-close:hover {
+    background: #f8fafc;
+}
+
+.settings-modal-header {
+    padding: 30px 34px 22px;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.settings-modal-header p {
+    margin: 0 0 6px;
+    color: #0f766e;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.settings-modal-header h2,
+.settings-confirm-modal h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.settings-modal-header span {
+    display: block;
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.settings-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 34px;
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+}
+
+.settings-profile-mark,
+.settings-confirm-icon {
+    width: 58px;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f766e;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    font-size: 24px;
+    font-weight: 800;
+    flex: 0 0 58px;
+}
+
+.settings-profile-card h3 {
+    margin: 0 0 4px;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.settings-profile-card p {
+    margin: 0;
+    color: #64748b;
+}
+
+.settings-detail-grid,
+.settings-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 0 34px 28px;
+}
+
+.settings-detail-grid div,
+.settings-readonly-card {
+    min-width: 0;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+}
+
+.settings-detail-grid span,
+.settings-readonly-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.settings-detail-grid strong,
+.settings-readonly-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.settings-readonly-card small {
+    display: block;
+    margin-top: 4px;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.settings-detail-wide,
+.settings-field-wide {
+    grid-column: 1 / -1;
+}
+
+.settings-edit-form {
+    padding: 24px 0 30px;
+}
+
+.settings-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 34px 16px;
+    padding: 12px 14px;
+    color: #b42318;
+    background: #fff1f0;
+    border: 1px solid #ffd1cc;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.settings-field label {
+    color: #0f172a;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.settings-field .input-text {
+    width: 100%;
+    min-height: 52px;
+    border-color: #dbe7ef !important;
+    border-radius: 8px !important;
+    background: #ffffff;
+    font-size: 16px;
+}
+
+.settings-field textarea.input-text {
+    min-height: 96px;
+    resize: vertical;
+}
+
+.settings-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 34px 0;
+}
+
+.settings-edit-form .settings-modal-actions {
+    padding-top: 6px;
+}
+
+.settings-details-modal .settings-modal-actions {
+    padding-bottom: 30px;
+}
+
+.settings-modal-actions .btn {
+    min-width: 126px;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+.settings-confirm-modal {
+    width: min(660px, 100%);
+    padding: 42px 42px 34px;
+    text-align: center;
+}
+
+.settings-confirm-modal .settings-modal-actions {
+    justify-content: center;
+    padding: 0;
+}
+
+.settings-confirm-icon {
+    margin: 0 auto 18px;
+    font-size: 28px;
+}
+
+.settings-danger-icon {
+    color: #b42318;
+    background: #fff1f0;
+    border-color: #ffd1cc;
+}
+
+.settings-confirm-copy {
+    max-width: 430px;
+    margin: 12px auto 20px;
+    color: #334155;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.settings-summary-card {
+    max-width: 430px;
+    margin: 0 auto 22px;
+    text-align: left;
+}
+
+.settings-summary-card div {
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #e6edf3;
+    border-radius: 8px;
+}
+
+.settings-summary-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.settings-summary-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+@media (max-width: 760px) {
+    .settings-modal-overlay {
+        padding: 12px;
+    }
+
+    .settings-modal {
+        margin: 18px auto;
+        max-height: calc(100vh - 36px);
+    }
+
+    .settings-modal-header,
+    .settings-profile-card,
+    .settings-alert {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .settings-modal-header {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .settings-profile-card {
+        margin: 20px 22px;
+    }
+
+    .settings-detail-grid,
+    .settings-form-grid {
+        grid-template-columns: 1fr;
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .settings-detail-wide,
+    .settings-field-wide {
+        grid-column: auto;
+    }
+
+    .settings-alert {
+        margin: 0 22px 16px;
+    }
+
+    .settings-confirm-modal {
+        padding: 34px 22px 28px;
+    }
+
+    .settings-modal-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .settings-confirm-modal .settings-modal-actions {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .settings-modal-actions .btn {
+        width: 100%;
+    }
+}

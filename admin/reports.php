@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/admin-dashboard-theme.css">
     <title>Reports & Analytics</title>
     <style>
         .popup{animation: transitionIn-Y-bottom 0.5s;}

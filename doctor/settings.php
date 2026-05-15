@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="../css/animations.css">  
     <link rel="stylesheet" href="../css/main.css">  
     <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/doctor-dashboard-theme.css">
+    <link rel="stylesheet" href="../css/doctor-settings.css">
         
 
 
@@ -50,6 +52,11 @@
 
     //import database
     include("../connection.php");
+    if(!function_exists('doctor_settings_h')){
+        function doctor_settings_h($value){
+            return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        }
+    }
     $userrow = $database->query("select * from doctor where docemail='$useremail'");
     $userfetch=$userrow->fetch_assoc();
     $userid= $userfetch["docid"];
@@ -188,8 +195,8 @@
     <?php 
     if($_GET){
         
-        $id=$_GET["id"];
-        $action=$_GET["action"];
+        $id=isset($_GET["id"]) ? (int) $_GET["id"] : 0;
+        $action=$_GET["action"] ?? "";
         if($action=='drop'){
             $nameget=$_GET["name"];
             echo '
@@ -215,175 +222,207 @@
         }elseif($action=='view'){
             $sqlmain= "select * from doctor where docid='$id'";
             $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["docname"];
-            $email=$row["docemail"];
-            $spe=$row["specialties"];
-            
-            $spcil_res= $database->query("select sname from specialties where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
-            $nic=$row['docnic'];
-            $tele=$row['doctel'];
-            echo '
-            <div id="popup1" class="overlay">
-                    <div class="popup" style="max-height: 90vh; overflow-y: auto;">
-                    <center>
-                        <h2></h2>
-                        <a class="close" href="settings.php">&times;</a>
-                        <div class="content" style="padding: 20px;">
-                            MediNex Web App<br>
-                            
+            $row=$result ? $result->fetch_assoc() : null;
+
+            if($row){
+                $name=$row["docname"];
+                $email=$row["docemail"];
+                $spe=(int)$row["specialties"];
+                
+                $spcil_res= $database->query("select sname from specialties where id='$spe'");
+                $spcil_array= $spcil_res ? $spcil_res->fetch_assoc() : null;
+                $spcil_name=$spcil_array["sname"] ?? "Not assigned";
+                $nic=$row['docnic'];
+                $tele=$row['doctel'];
+            ?>
+            <div id="popup1" class="overlay doctor-settings-modal-overlay">
+                <div class="popup doctor-settings-modal">
+                    <a class="close doctor-settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <div class="doctor-settings-modal-header">
+                        <p>MediNex Web App</p>
+                        <h2>View Details</h2>
+                    </div>
+                    <div class="doctor-settings-profile-card">
+                        <span><?php echo doctor_settings_h(substr($name, 0, 1)); ?></span>
+                        <div>
+                            <h3><?php echo doctor_settings_h($name); ?></h3>
+                            <p><?php echo doctor_settings_h($email); ?></p>
                         </div>
-                        <!-- START HERE: Bootstrap Card Section - View Details Popup with Scrollbar -->
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title mb-4">View Details</h5>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Name:</label>
-                                    <p class="mb-0">'.$name.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Email:</label>
-                                    <p class="mb-0">'.$email.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">NIC:</label>
-                                    <p class="mb-0">'.$nic.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Telephone:</label>
-                                    <p class="mb-0">'.$tele.'</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Specialties:</label>
-                                    <p class="mb-0">'.$spcil_name.'</p>
-                                </div>
-                                <a href="settings.php" class="btn btn-primary">OK</a>
-                            </div>
+                    </div>
+                    <div class="doctor-settings-detail-grid">
+                        <div>
+                            <span>Name</span>
+                            <strong><?php echo doctor_settings_h($name); ?></strong>
                         </div>
-                        <!-- END HERE: Bootstrap Card Section - View Details Popup with Scrollbar -->
-                    </center>
-                    <br><br>
+                        <div>
+                            <span>Email</span>
+                            <strong><?php echo doctor_settings_h($email); ?></strong>
+                        </div>
+                        <div>
+                            <span>NIC</span>
+                            <strong><?php echo doctor_settings_h($nic); ?></strong>
+                        </div>
+                        <div>
+                            <span>Telephone</span>
+                            <strong><?php echo doctor_settings_h($tele); ?></strong>
+                        </div>
+                        <div class="doctor-settings-detail-wide">
+                            <span>Specialties</span>
+                            <strong><?php echo doctor_settings_h($spcil_name); ?></strong>
+                        </div>
+                    </div>
+                    <div class="doctor-settings-modal-actions">
+                        <a href="settings.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
+            <?php
+            }else{
+            ?>
+            <div id="popup1" class="overlay doctor-settings-modal-overlay">
+                <div class="popup doctor-settings-modal doctor-settings-success">
+                    <a class="close doctor-settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <h2>Doctor Not Found</h2>
+                    <p>The selected doctor account is not available.</p>
+                    <div class="doctor-settings-modal-actions">
+                        <a href="settings.php" class="btn btn-primary">OK</a>
+                    </div>
+                </div>
             </div>
-            ';
+            <?php
+            }
         }elseif($action=='edit'){
             $sqlmain= "select * from doctor where docid='$id'";
             $result= $database->query($sqlmain);
-            $row=$result->fetch_assoc();
-            $name=$row["docname"];
-            $email=$row["docemail"];
-            $spe=$row["specialties"];
-            
-            $spcil_res= $database->query("select sname from specialties where id='$spe'");
-            $spcil_array= $spcil_res->fetch_assoc();
-            $spcil_name=$spcil_array["sname"];
-            $nic=$row['docnic'];
-            $tele=$row['doctel'];
+            $row=$result ? $result->fetch_assoc() : null;
 
-            $error_1=$_GET["error"];
+            if($row){
+                $name=$row["docname"];
+                $email=$row["docemail"];
+                $spe=(int)$row["specialties"];
+                
+                $spcil_res= $database->query("select sname from specialties where id='$spe'");
+                $spcil_array= $spcil_res ? $spcil_res->fetch_assoc() : null;
+                $spcil_name=$spcil_array["sname"] ?? "Not assigned";
+                $nic=$row['docnic'];
+                $tele=$row['doctel'];
+
+                $error_1=$_GET["error"] ?? "0";
                 $errorlist= array(
-                    '1'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Already have an account for this Email address.</label>',
-                    '2'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Password Conformation Error! Reconform Password</label>',
-                    '3'=>'<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;"></label>',
-                    '4'=>"",
+                    '1'=>'Already have an account for this Email address.',
+                    '2'=>'Password Confirmation Error! Reconfirm Password.',
+                    '3'=>'',
+                    '4'=>'',
                     '0'=>'',
-
                 );
 
-            if($error_1!='4'){
-                    echo '
-                    <div id="popup1" class="overlay">
-                            <div class="popup">
-                            <center>
-                            
-                                <a class="close" href="settings.php">&times;</a> 
-                                <!-- START HERE: Bootstrap Card Form Section - Edit Doctor Settings -->
-                                <div class="card">
-                                    <div class="card-body">
-                                        '.$errorlist[$error_1].'
-                                        <h5 class="card-title mb-4">Edit Doctor Details</h5>
-                                        <p class="text-muted">Doctor ID: '.$id.' (Auto Generated)</p>
-                                        <form action="edit-doc.php" method="POST">
-                                            <input type="hidden" value="'.$id.'" name="id00">
-                                            <input type="hidden" name="oldemail" value="'.$email.'">
-                                            <div class="mb-3">
-                                                <label for="Email" class="form-label">Email</label>
-                                                <input type="email" name="email" class="form-control" placeholder="Email Address" value="'.$email.'" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="name" class="form-label">Name</label>
-                                                <input type="text" name="name" class="form-control" placeholder="Doctor Name" value="'.$name.'" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="nic" class="form-label">NIC</label>
-                                                <input type="text" name="nic" class="form-control" placeholder="NIC Number" value="'.$nic.'" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="Tele" class="form-label">Telephone</label>
-                                                <input type="tel" name="Tele" class="form-control" placeholder="Telephone Number" value="'.$tele.'" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="spec" class="form-label">Choose specialties (Current: '.$spcil_name.')</label>
-                                                <select name="spec" class="form-select">';
-                                                
-                                                $list11 = $database->query("select * from specialties;");
-                                                for ($y=0;$y<$list11->num_rows;$y++){
-                                                    $row00=$list11->fetch_assoc();
-                                                    echo "<option value=".$row00["id"].">".$row00["sname"]."</option>";
-                                                }
-                                                
-                                echo     '       </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="password" class="form-label">Password</label>
-                                                <input type="password" name="password" class="form-control" placeholder="Define a Password" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="cpassword" class="form-label">Confirm Password</label>
-                                                <input type="password" name="cpassword" class="form-control" placeholder="Confirm Password" required>
-                                            </div>
-                                            <div class="d-flex gap-2">
-                                                <input type="reset" value="Reset" class="btn btn-secondary">
-                                                <input type="submit" value="Save" class="btn btn-primary">
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- END HERE: Bootstrap Card Form Section - Edit Doctor Settings -->
-                            </center>
-                            <br><br>
+                if($error_1!='4'){
+            ?>
+            <div id="popup1" class="overlay doctor-settings-modal-overlay">
+                <div class="popup doctor-settings-modal doctor-settings-edit-modal">
+                    <a class="close doctor-settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <div class="doctor-settings-modal-header">
+                        <p>Account Settings</p>
+                        <h2>Edit Doctor Details</h2>
+                        <span>Doctor ID: <?php echo doctor_settings_h($id); ?> (Auto Generated)</span>
                     </div>
+                    <form action="edit-doc.php" method="POST" class="doctor-settings-form">
+                        <?php if(!empty($errorlist[$error_1])){ ?>
+                            <div class="doctor-settings-alert"><?php echo doctor_settings_h($errorlist[$error_1]); ?></div>
+                        <?php } ?>
+                        <input type="hidden" value="<?php echo doctor_settings_h($id); ?>" name="id00">
+                        <input type="hidden" name="oldemail" value="<?php echo doctor_settings_h($email); ?>">
+                        <div class="doctor-settings-profile-card">
+                            <span><?php echo doctor_settings_h(substr($name, 0, 1)); ?></span>
+                            <div>
+                                <h3><?php echo doctor_settings_h($name); ?></h3>
+                                <p><?php echo doctor_settings_h($email); ?></p>
+                            </div>
+                        </div>
+                        <div class="doctor-settings-form-grid">
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-email">Email</label>
+                                <input id="doctor-settings-email" type="email" name="email" class="form-control" placeholder="Email Address" value="<?php echo doctor_settings_h($email); ?>" required>
+                            </div>
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-name">Name</label>
+                                <input id="doctor-settings-name" type="text" name="name" class="form-control" placeholder="Doctor Name" value="<?php echo doctor_settings_h($name); ?>" required>
+                            </div>
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-nic">NIC</label>
+                                <input id="doctor-settings-nic" type="text" name="nic" class="form-control" placeholder="NIC Number" value="<?php echo doctor_settings_h($nic); ?>" required>
+                            </div>
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-telephone">Telephone</label>
+                                <input id="doctor-settings-telephone" type="tel" name="Tele" class="form-control" placeholder="Telephone Number" value="<?php echo doctor_settings_h($tele); ?>" required>
+                            </div>
+                            <div class="doctor-settings-field doctor-settings-field-wide">
+                                <label for="doctor-settings-spec">Specialties <span>Current: <?php echo doctor_settings_h($spcil_name); ?></span></label>
+                                <select id="doctor-settings-spec" name="spec" class="form-select" required>
+                                    <?php
+                                    $list11 = $database->query("select * from specialties order by sname asc;");
+                                    if($list11){
+                                        while($row00=$list11->fetch_assoc()){
+                                            $specialty_id=(int)$row00["id"];
+                                            $selected=$specialty_id===$spe ? "selected" : "";
+                                    ?>
+                                    <option value="<?php echo $specialty_id; ?>" <?php echo $selected; ?>><?php echo doctor_settings_h($row00["sname"]); ?></option>
+                                    <?php
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-password">Password</label>
+                                <input id="doctor-settings-password" type="password" name="password" class="form-control" placeholder="Define a Password" required>
+                            </div>
+                            <div class="doctor-settings-field">
+                                <label for="doctor-settings-confirm-password">Confirm Password</label>
+                                <input id="doctor-settings-confirm-password" type="password" name="cpassword" class="form-control" placeholder="Confirm Password" required>
+                            </div>
+                        </div>
+                        <div class="doctor-settings-form-actions">
+                            <input type="reset" value="Reset" class="btn btn-secondary">
+                            <input type="submit" value="Save" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <?php
+                }else{
+            ?>
+            <div id="popup1" class="overlay doctor-settings-modal-overlay">
+                <div class="popup doctor-settings-modal doctor-settings-success">
+                    <a class="close doctor-settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <div class="doctor-settings-success-icon">
+                        <i class="bi bi-check2"></i>
                     </div>
-                    ';
-        }else{
-            echo '
-                <div id="popup1" class="overlay">
-                        <div class="popup">
-                        <center>
-                        <br><br><br><br>
-                            <h2>Edit Successfully!</h2>
-                            <a class="close" href="settings.php">&times;</a>
-                            <div class="content">
-                                If You change your email also Please logout and login again with your new email
-                                
-                            </div>
-                            <!-- START HERE: Bootstrap Button Group - Edit Success -->
-                            <div class="d-flex justify-content-center gap-2">
-                            <a href="settings.php" class="btn btn-primary">OK</a>
-                            <a href="../logout.php" class="btn btn-outline-secondary">Log out</a>
-                            </div>
-                            <!-- END HERE: Bootstrap Button Group - Edit Success -->
-                            <br><br>
-                        </center>
+                    <h2>Edit Successfully!</h2>
+                    <p>If you changed your email, please log out and log in again with your new email.</p>
+                    <div class="doctor-settings-form-actions justify-content-center">
+                        <a href="settings.php" class="btn btn-primary">OK</a>
+                        <a href="../logout.php" class="btn btn-outline-secondary">Log out</a>
+                    </div>
                 </div>
+            </div>
+            <?php
+                }
+            }else{
+            ?>
+            <div id="popup1" class="overlay doctor-settings-modal-overlay">
+                <div class="popup doctor-settings-modal doctor-settings-success">
+                    <a class="close doctor-settings-modal-close" href="settings.php" aria-label="Close">&times;</a>
+                    <h2>Doctor Not Found</h2>
+                    <p>The selected doctor account is not available.</p>
+                    <div class="doctor-settings-form-actions justify-content-center">
+                        <a href="settings.php" class="btn btn-primary">OK</a>
+                    </div>
                 </div>
-    ';
-
-
-
-        }; }
+            </div>
+            <?php
+            }
+        }
 
     }
         ?>
